@@ -5,7 +5,6 @@ import argparse
 import aaargh
 import re
 
-from dva.work.serial_main import main as serial_main
 from dva.tools import catching
 # load all testing modules
 from dva.test import *
@@ -42,7 +41,22 @@ APP.arg('-c', '--conf', help='use conf file', default=None)
 @APP.cmd_arg('-n', '--no-action', help='take no action', action='store_true')
 def svalidate(loglevel, conf, istream, ostream, test_whitelist, test_blacklist, stage_whitelist, stage_blacklist, no_action):
     logging.basicConfig(level=getattr(logging, loglevel))
-    serial_main(conf, istream, ostream, test_whitelist, test_blacklist, stage_whitelist, stage_blacklist, no_action)
+    from dva.work.serial_main import main as main
+    main(conf, istream, ostream, test_whitelist, test_blacklist, stage_whitelist, stage_blacklist, no_action)
+
+@APP.cmd(help='validate in parallel')
+@APP.cmd_arg('-i', '--istream', help='input filename', type=argparse.FileType('r'), default=sys.stdin)
+@APP.cmd_arg('-o', '--ostream', help='output filename', type=argparse.FileType('a'), default=sys.stdout)
+@APP.cmd_arg('-t', '--test-whitelist', help='regexp testname list', default=['.*'], nargs='+', metavar='PATTERN')
+@APP.cmd_arg('-T', '--test-blacklist', help='regexp testname list', default=[], nargs='+', metavar='PATTERN')
+@APP.cmd_arg('-s', '--stage-whitelist', help='regexp stagename list', default=['.*'], nargs='+', metavar='PATTERN')
+@APP.cmd_arg('-S', '--stage-blacklist', help='regexp stagename list', default=[], nargs='+', metavar='PATTERN')
+@APP.cmd_arg('-n', '--no-action', help='take no action', action='store_true')
+def validate(loglevel, conf, istream, ostream, test_whitelist, test_blacklist, stage_whitelist, stage_blacklist, no_action):
+    logging.basicConfig(level=getattr(logging, loglevel))
+    from dva.work.data_parallel_main import main
+    main(conf, istream, ostream, test_whitelist, test_blacklist, stage_whitelist, stage_blacklist, no_action)
+
 
 
 sys.exit(APP.run())
