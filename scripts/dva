@@ -8,7 +8,7 @@ import re
 from dva.work.serial_main import main as serial_main
 from dva.tools import catching
 # load all testing modules
-from test import *
+from dva.test import *
 
 RE_ANY = re.compile('.*')
 
