@@ -1,0 +1,18 @@
+- arch: x86_64
+  cpu: '2'
+  cloudhwname: m3.large
+  memory: '7000000'
+  virtualization: hvm
+- arch: x86_64
+  cpu: '2'
+  cloudhwname: c3.large
+  memory: '3500000'
+  virtualization: hvm
+- arch: x86_64
+  bmap:
+  - {delete_on_termination: true, name: /dev/sda1, size: '15'}
+  - {ephemeral_name: ephemeral0, name: /dev/sdf}
+  cpu: '32'
+  cloudhwname: cr1.8xlarge
+  memory: '244000000'
+  virtualization: 'hvm'

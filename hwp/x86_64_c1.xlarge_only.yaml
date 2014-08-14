@@ -1,0 +1,5 @@
+- arch: x86_64
+  cpu: '8'
+  cloudhwname: c1.xlarge
+  memory: '6997900'
+  virtualization: paravirtual

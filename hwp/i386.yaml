@@ -1,0 +1,26 @@
+- arch: 'i386'
+  cpu: '1'
+  memory: '600000'
+  cloudhwname: t1.micro
+  virtualization: 'paravirtual'
+  userdata: &USERDATA |
+      #! /bin/sh -ex
+      yum -y install xdelta
+      touch /userdata_test
+      date >> /userdata_test
+- arch: 'i386'
+  cpu: '1'
+  memory: '1700000'
+  cloudhwname: m1.small
+  virtualization: 'paravirtual'
+  userdata: *USERDATA
+  bmap: &BMAP
+  - {delete_on_termination: true, name: /dev/sda1, size: '15'}
+  - {ephemeral_name: ephemeral0, name: /dev/sdf}
+- arch: 'i386'
+  cpu: '2'
+  memory: '1700000'
+  cloudhwname: c1.medium
+  virtualization: 'paravirtual'
+  userdata: *USERDATA
+  bmap: *BMAP

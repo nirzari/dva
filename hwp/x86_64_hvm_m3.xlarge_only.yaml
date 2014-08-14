@@ -1,0 +1,13 @@
+- arch: x86_64
+  bmap:
+  - {delete_on_termination: true, name: /dev/sda1, size: '15'}
+  - {ephemeral_name: ephemeral0, name: /dev/sdf}
+  userdata: &USERDATA |
+      #! /bin/sh -ex
+      yum -y install xdelta
+      touch /userdata_test
+      date >> /userdata_test
+  cpu: '4'
+  cloudhwname: m3.xlarge
+  memory: '14000000'
+  virtualization: hvm

@@ -1,0 +1,211 @@
+# REPO CONFIGS
+# since the config has been changing with product version and region, the
+# mapping has to provide the same.
+# Fortunately, lots of entries are repeated therefore aliases may be used
+# to keep the structure somewhat smaller
+#
+# HINTS
+# - we start with most generic stuff to re-use the declarations later
+# - %region% is always replaced to rhui-<region name>- within the test case
+
+HAS_RHEL_DEBUGINFO: &HAS_RHEL_DEBUGINFO
+    rhel-debuginfo: false
+HAS_RHEL_SOURCE: &HAS_RHEL_SOURCE
+    rhel-source: false
+HAS_RHEL_SOURCE_BETA: &HAS_RHEL_SOURCE_BETA
+    rhel-source-beta: false
+
+RHEL_5ANY: &RHEL_5ANY
+    <<: *HAS_RHEL_DEBUGINFO
+    rhui-%region%-client-config-server-5: true
+    rhui-%region%-rhel-server: true
+    rhui-%region%-rhel-server-source: false
+BETA_5ANY: &BETA_5ANY
+    <<: *RHEL_5ANY
+
+RHEL_59_AND_NEWER: &RHEL_59_AND_NEWER
+    <<: *HAS_RHEL_DEBUGINFO
+    rhui-%region%-client-config-server-5: true
+    rhui-%region%-rhel-server: true
+    rhui-%region%-rhel-server-source: false
+
+BETA_59_AND_NEWER: &BETA_59_AND_NEWER
+    <<: *RHEL_59_AND_NEWER
+    rhui-%region%-client-config-server-5-beta: true
+
+RHEL_6ANY: &RHEL_6ANY
+    <<: *HAS_RHEL_SOURCE
+    rhui-%region%-client-config-server-6: true
+    rhui-%region%-rhel-server-releases: true
+    rhui-%region%-rhel-server-releases-optional: true
+    rhui-%region%-rhel-server-releases-optional-source: false
+    rhui-%region%-rhel-server-releases-source: false
+    rhel-source-beta: false
+BETA_6ANY: &BETA_6ANY
+    <<: *RHEL_6ANY
+    <<: *HAS_RHEL_SOURCE_BETA
+    rhui-%region%-client-config-server-6-beta: true
+    rhui-%region%-rhel-server-releases-beta: true
+    rhui-%region%-rhel-server-releases-optional-beta: true
+    rhui-%region%-rhel-server-releases-optional-source-beta: false
+    rhui-%region%-rhel-server-releases-source-beta: false
+
+# generic region
+ANY_REGION: &ANY_REGION
+    RHEL_5.5:
+        <<: *RHEL_5ANY
+        rhel-debuginfo-beta: false
+    BETA_5.5:
+        <<: *BETA_5ANY
+    RHEL_5.6:
+        <<: *RHEL_5ANY
+        rhel-source: false
+        rhel-debuginfo-beta: false
+    BETA_5.6:
+        <<: *BETA_5ANY
+    RHEL_5.7:
+        <<: *RHEL_5ANY
+        rhel-source: false
+        rhel-debuginfo-beta: false
+    BETA_5.7:
+        <<: *BETA_5ANY
+    RHEL_5.8:
+        <<: *RHEL_5ANY
+    BETA_5.8:
+        <<: *BETA_5ANY
+    RHEL_5.9:
+        <<: *RHEL_59_AND_NEWER
+    BETA_5.9:
+        <<: *BETA_59_AND_NEWER
+    RHEL_5.10:
+        <<: *HAS_RHEL_DEBUGINFO
+        rhui-REGION-rhel-server-supplementary: false
+        rhui-REGION-rhel-server-source-supplementary: false
+        rhui-REGION-rhel-server: true
+        rhui-REGION-client-config-server-5: true
+        rhui-REGION-rhel-server-source: false
+        rhui-REGION-rhel-server-debug-supplementary: false
+    BETA_5.10:
+        <<: *HAS_RHEL_DEBUGINFO
+        rhui-REGION-rhel-server-supplementary: true
+        rhui-REGION-rhel-server-releases-debug-beta: true
+        rhui-REGION-rhel-server-releases-beta: true
+        rhui-REGION-client-config-server-5-beta: true
+        rhui-REGION-rhel-server-source: false
+        rhui-REGION-client-config-server-5: true
+        rhui-REGION-rhel-server-source-supplementary: false
+        rhui-REGION-rhel-server: true
+        rhui-REGION-rhel-server-releases-source-beta: false
+    RHEL_5.11:
+        <<: *HAS_RHEL_DEBUGINFO
+        rhui-REGION-rhel-server-supplementary: false
+        rhui-REGION-rhel-server-source-supplementary: false
+        rhui-REGION-rhel-server: true
+        rhui-REGION-client-config-server-5: true
+        rhui-REGION-rhel-server-source: false
+        rhui-REGION-rhel-server-debug-supplementary: false
+    BETA_5.11:
+        rhui-REGION-client-config-server-5-beta: true
+        rhel-debuginfo: false
+        rhui-REGION-rhel-server-releases-beta: true
+        rhui-REGION-rhel-server-releases-debug-beta: false
+        rhui-REGION-rhel-server-releases-source-beta: false
+    RHEL_6.1:
+        <<: *RHEL_6ANY
+    BETA_6.1:
+        <<: *BETA_6ANY
+    RHEL_6.2:
+        <<: *RHEL_6ANY
+    BETA_6.2:
+        <<: *BETA_6ANY
+    RHEL_6.3:
+        <<: *RHEL_6ANY
+    BETA_6.3:
+        <<: *BETA_6ANY
+    RHEL_6.4:
+        # in 6.4 source beta (RC) comes with redhat-release-server
+        <<: *RHEL_6ANY
+        rhel-source-beta: false
+    BETA_6.4:
+        <<: *BETA_6ANY
+    BETA_6.5:
+        <<: *HAS_RHEL_SOURCE
+        <<: *HAS_RHEL_SOURCE_BETA
+        rhui-REGION-client-config-server-6: true
+        rhui-REGION-client-config-server-6-beta: true
+        rhui-REGION-rhel-server-releases: true
+        rhui-REGION-rhel-server-releases-beta: true
+        rhui-REGION-rhel-server-releases-optional: true
+        rhui-REGION-rhel-server-releases-optional-beta: true
+        rhui-REGION-rhel-server-releases-optional-source: false
+        rhui-REGION-rhel-server-releases-optional-source-beta: false
+        rhui-REGION-rhel-server-releases-source: false
+        rhui-REGION-rhel-server-releases-source-beta: false
+        rhui-REGION-rhel-server-debug-rhscl: false
+        rhui-REGION-rhel-server-debug-supplementary: false
+        rhui-REGION-rhel-server-rhscl: true
+        rhui-REGION-rhel-server-source-rhscl: false
+        rhui-REGION-rhel-server-source-supplementary: false
+        rhui-REGION-rhel-server-supplementary: false
+    RHEL_6.5:
+        <<: *HAS_RHEL_SOURCE
+        <<: *HAS_RHEL_SOURCE_BETA
+        rhui-REGION-client-config-server-6: true
+        rhui-REGION-rhel-server-releases: true
+        rhui-REGION-rhel-server-releases-optional: true
+        rhui-REGION-rhel-server-releases-optional-source: false
+        rhui-REGION-rhel-server-releases-source: false
+        rhui-REGION-rhel-server-debug-rhscl: false
+        rhui-REGION-rhel-server-debug-supplementary: false
+        rhui-REGION-rhel-server-rhscl: true
+        rhui-REGION-rhel-server-source-rhscl: false
+        rhui-REGION-rhel-server-source-supplementary: false
+        rhui-REGION-rhel-server-supplementary: false
+        rhui-REGION-rhel-server-rh-common: true
+        rhui-REGION-rhel-server-source-rh-common: false
+        rhui-REGION-rhel-server-debug-rh-common: false
+    BETA_7.0:
+        rhui-REGION-client-config-server-7-beta: true
+        rhui-REGION-rhel-server-releases-beta: true
+        rhui-REGION-rhel-server-releases-source-beta: false
+        rhui-REGION-rhel-server-releases-debug-beta: false
+    RHEL_7.0:
+        rhui-REGION-client-config-server-7: true
+        rhui-REGION-rhel-server-releases: true
+        rhui-REGION-rhel-server-releases-source: false
+        rhui-REGION-rhel-server-releases-debug: false
+        rhui-REGION-rhel-server-releases-optional: true
+        rhui-REGION-rhel-server-releases-optional-source: false
+        rhui-REGION-rhel-server-releases-optional-debug: false
+        rhui-REGION-rhel-server-supplementary: false
+        rhui-REGION-rhel-server-debug-supplementary: false
+        rhui-REGION-rhel-server-source-supplementary: false
+        rhui-REGION-rhel-server-rhscl: true
+        rhui-REGION-rhel-server-debug-rhscl: false
+        rhui-REGION-rhel-server-source-rhscl: false
+        rhui-REGION-rhel-server-rh-common: true
+        rhui-REGION-rhel-server-source-rh-common: false
+        rhui-REGION-rhel-server-debug-rh-common: false
+        rhui-REGION-rhel-server-extras-debug: false
+        rhui-REGION-rhel-server-extras-rpms: false
+        rhui-REGION-rhel-server-extras-source-rpms: false
+
+
+
+# particular regions follow
+ap-northeast-1:
+    <<: *ANY_REGION
+ap-southeast-1:
+    <<: *ANY_REGION
+ap-southeast-2:
+    <<: *ANY_REGION
+eu-west-1:
+    <<: *ANY_REGION
+sa-east-1:
+    <<: *ANY_REGION
+us-east-1:
+    <<: *ANY_REGION
+us-west-1:
+    <<: *ANY_REGION
+us-west-2:
+    <<: *ANY_REGION
