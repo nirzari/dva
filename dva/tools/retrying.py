@@ -6,7 +6,13 @@ import sys
 from functools import wraps
 logger = logging.getLogger(__name__)
 
-def retrying(maxtries=3, sleep=10, loglevel=logging.WARNING, final_exception=None):
+class EAgain(RuntimeError):
+    '''raise to retry'''
+
+class RetryingError(RuntimeError):
+    '''too many retries'''
+
+def retrying(maxtries=3, sleep=10, loglevel=logging.WARNING, final_exception=RetryingError):
     '''
     retrying-logic decorator
     @param maxtries: how many times before giving up
@@ -27,16 +33,9 @@ def retrying(maxtries=3, sleep=10, loglevel=logging.WARNING, final_exception=Non
                 logger.debug('%s: try: #%s', fn.__name__, ntries)
                 try:
                     return fn(*args, **kvs)
-                except final_exception as err:
-                    raise type(err)('%s: (try #%s): final_exception: %s' % (fn.__name__, ntries, err))
-                except (NameError, TypeError, ValueError, KeyError, IndexError, AttributeError,
-                            UnboundLocalError, AssertionError) as err:
-                    # too generic exception --- just break
-                    logger.error('%s encountered: %s\n%s' % (fn.__name__, err, traceback.format_exc()))
-                    raise sys.exc_info()
-                except Exception as err:
+                except EAgain as err:
                     logger.log(loglevel, '%s: (try #%s): %s --- retrying in %ss', fn.__name__, ntries, err, sleep)
-                time.sleep(sleep)
+                    time.sleep(sleep)
             # not reached in case fn call was successful --- return statement
             else:
                 raise final_exception('%s: %s. Too many retries: %s.' % (fn.__name__, err, ntries))

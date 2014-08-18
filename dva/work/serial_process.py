@@ -33,7 +33,7 @@ def process(params):
         yield params
     except Exception as err:
         # unhandled error
-        logger.error('unhandled exception: %s', err)
+        logger.error('unhandled exception: %s(%s)', type(err), err)
         params['stage_exception'] = traceback.format_exc()
         params['stage_result'] = RESULT_ERROR
         yield params

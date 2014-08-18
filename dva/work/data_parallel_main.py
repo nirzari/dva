@@ -2,8 +2,6 @@
 basic data-parallel main function module
 '''
 
-import gevent
-from gevent import monkey; monkey.patch_all()
 from gevent.coros import RLock
 from gevent.pool import Pool
 
@@ -38,6 +36,6 @@ def main(conf, istream, ostream, test_whitelist, test_blacklist, stage_whitelist
     params = load(istream, config_file=conf, augment=params)
     TOTAL = required_actions_count(params)
     print_progress_info(PROCESSED, TOTAL)
-    pool = gevent.pool.Pool(size=32)
+    pool = Pool(size=32)
     pool.map(lambda item: target(ostream, item), params)
 

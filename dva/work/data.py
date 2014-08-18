@@ -149,7 +149,7 @@ def save_result(stream, result):
     if isinstance(stream, file):
         ysafe_dump_all([[result]], stream, Dumper=Dumper)
     else:
-        with open(stream, 'w+') as fd:
+        with open(stream, 'w') as fd:
             ysafe_dump_all([[result]], fd, Dumper=Dumper)
 
     

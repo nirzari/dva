@@ -10,7 +10,7 @@ from functools import wraps
 from stitches import Expect, ExpectFailed
 from stitches.connection import StitchesConnectionException
 from .. import cloud
-from ..tools.retrying import retrying
+from ..tools.retrying import retrying, EAgain
 from ..connection.cache import get_connection, assert_connection, connection_cache_key, drop_connection, ConnectionCacheError
 from ..connection.contextmanager import connection as connection_ctx
 from data import brief, when_enabled
@@ -72,13 +72,7 @@ def create_instance(params):
         driver.create(params)
     except cloud.base.TemporaryCloudException as err:
         logger.debug('Temporary Cloud Exception: %s', err)
-        time.sleep(10)
-    except cloud.base.SkipCloudException as err:
-        logger.error('Skip Cloud Exception: %s', err)
-        raise InstantiationError('Skip Cloud Exception: %s', err)
-    except cloud.base.PermanentCloudException as err:
-        logger.error('Permanent cloud exception: %s', err)
-        raise InstantiationError(err)
+        raise EAgain(err)
     return params
 
 @stage
@@ -114,7 +108,7 @@ def attempt_ssh(params):
 
 @stage
 @when_enabled
-@retrying(maxtries=3, sleep=3, final_exception=ExpectFailed)
+@retrying(maxtries=3, sleep=3, final_exception=SetUpError)
 def allow_root_login(params):
     '''allow root ssh login'''
     _, host, user, ssh_key = connection_cache_key(params)
@@ -133,7 +127,11 @@ def allow_root_login(params):
 
     # Exceptions cause retries, save for ExpectFailed
     with connection_ctx(host, user, ssh_key) as con:
-        Expect.ping_pong(con, command, '\r\nSUCCESS\r\n')
+        try:
+            Expect.ping_pong(con, command, '\r\nSUCCESS\r\n')
+        except ExpectFailed as err:
+            # retry
+            raise EAgain(err)
 
     # update user to root
     params['ssh']['user'] = 'root'
@@ -164,17 +162,14 @@ def global_setup_script(params):
 
     script_timeout = params.get('global_setup_script_timeout', DEFAULT_GLOBAL_SETUP_SCRIPT_TIMEOUT)
 
-    try:
-        con = get_connection(params)
-        logger.debug('%s: got connection', hostname)
-        con.sftp.put(script, remote_script)
-        logger.debug('%s sftp succeeded %s -> %s', hostname, script, remote_script)
-        con.sftp.chmod(remote_script, 0700)
-        logger.debug('%s chmod succeeded 0700 %s', hostname, remote_script)
-        Expect.ping_pong(con, '%s && echo SUCCESS' % remote_script, '\r\nSUCCESS\r\n', timeout=script_timeout)
-        logger.debug('%s set up script finished %s', hostname, remote_script)
-    except (ConnectionCacheError, StitchesConnectionException, ExpectFailed) as err:
-        raise SetUpError(err)
+    con = get_connection(params)
+    logger.debug('%s: got connection', hostname)
+    con.sftp.put(script, remote_script)
+    logger.debug('%s sftp succeeded %s -> %s', hostname, script, remote_script)
+    con.sftp.chmod(remote_script, 0700)
+    logger.debug('%s chmod succeeded 0700 %s', hostname, remote_script)
+    Expect.ping_pong(con, '%s && echo SUCCESS' % remote_script, '\r\nSUCCESS\r\n', timeout=script_timeout)
+    logger.debug('%s set up script finished %s', hostname, remote_script)
 
     return params
 
