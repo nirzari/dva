@@ -27,7 +27,7 @@ def target(ostream, params):
 
 
 
-def main(conf, istream, ostream, test_whitelist, test_blacklist, stage_whitelist, stage_blacklist, no_action):
+def main(conf, istream, ostream, test_whitelist, test_blacklist, stage_whitelist, stage_blacklist, no_action, pool_size):
     ''' main parallel-data worker function'''
     global TOTAL
     params = dict(test_whitelist=test_whitelist, test_blacklist=test_blacklist,
@@ -36,6 +36,6 @@ def main(conf, istream, ostream, test_whitelist, test_blacklist, stage_whitelist
     params = load(istream, config_file=conf, augment=params)
     TOTAL = required_actions_count(params)
     print_progress_info(PROCESSED, TOTAL)
-    pool = Pool(size=32)
+    pool = Pool(size=pool_size)
     pool.map(lambda item: target(ostream, item), params)
 

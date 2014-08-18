@@ -52,10 +52,11 @@ def svalidate(loglevel, conf, istream, ostream, test_whitelist, test_blacklist, 
 @APP.cmd_arg('-s', '--stage-whitelist', help='regexp stagename list', default=['.*'], nargs='+', metavar='PATTERN')
 @APP.cmd_arg('-S', '--stage-blacklist', help='regexp stagename list', default=[], nargs='+', metavar='PATTERN')
 @APP.cmd_arg('-n', '--no-action', help='take no action', action='store_true')
-def validate(loglevel, conf, istream, ostream, test_whitelist, test_blacklist, stage_whitelist, stage_blacklist, no_action):
+@APP.cmd_arg('-p', '--pool_size', help='greenlet pool size', default=128, type=int)
+def validate(loglevel, conf, istream, ostream, test_whitelist, test_blacklist, stage_whitelist, stage_blacklist, no_action, pool_size):
     logging.basicConfig(level=getattr(logging, loglevel))
     from dva.work.data_parallel_main import main
-    main(conf, istream, ostream, test_whitelist, test_blacklist, stage_whitelist, stage_blacklist, no_action)
+    main(conf, istream, ostream, test_whitelist, test_blacklist, stage_whitelist, stage_blacklist, no_action, pool_size)
 
 
 
