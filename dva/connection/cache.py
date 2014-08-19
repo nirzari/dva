@@ -8,6 +8,7 @@ import logging
 import traceback
 import paramiko
 from ..tools.retrying import retrying, EAgain
+from .. import cloud, work
 from stitches import Connection, Expect, ExpectFailed
 from stitches.connection import StitchesConnectionException
 
@@ -71,6 +72,7 @@ def get_connection(params):
         # something went wrong --- drop and keep retrying
         logger.debug('got %s asserting %s --- dropping connection', err, CONNECTION_CACHE[key])
         drop_connection(params)
+        work.params.reload(params)
         raise err
     # got connection --- return
     return CONNECTION_CACHE[key]

@@ -53,3 +53,6 @@ class AbstractCloud(object):
 
     def get_console_output(self, params):
         raise PermanentCloudException("Not implemented")
+
+    def update(self, params):
+        raise PermanentCloudException("Not implemented")

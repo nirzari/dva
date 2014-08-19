@@ -11,7 +11,8 @@ from stitches.connection import StitchesConnectionException
 from ..tools.registry import TEST_CLASSES, TEST_STAGES
 from ..tools.logged import logged
 from ..connection.cache import get_connection, assert_connection, connection_cache_key, drop_connection, ConnectionCacheError
-from data import when_enabled, brief
+from data import brief
+from params import when_enabled
 from common import RESULT_ERROR, RESULT_PASSED, RESULT_FAILED
 
 

@@ -118,6 +118,17 @@ class EC2(AbstractCloud):
             # Unexpected error happened
             raise UnknownCloudException('Unknown error during instance creation: ' + traceback.format_exc())
 
+
+    def update(self, params):
+        try:
+            connection = self._get_connection(params)
+            myinstance = connection.get_only_instances([params['id']])[0]
+        except (IndexError, boto.exception.EC2ResponseError) as err:
+            raise PermanentCloudException('no instances found for %s' % params['id'])
+        result = myinstance.__dict__.copy()
+        params['instance'] = result
+        params['hostname'] = result['public_dns_name'] or result['private_ip_address']
+
     def terminate(self, params):
         try:
             connection = self._get_connection(params)

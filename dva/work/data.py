@@ -159,22 +159,6 @@ def brief(record):
     return '%(region)s %(ami)s %(cloudhwname)s %(product)s %(version)s %(itype)s' % record
 
 
-def when_enabled(fn):
-    '''
-    enabled-params check decorator; if not enabled; just return the params
-    '''
-    @wraps(fn)
-    def wrapper(params):
-        try:
-            enabled = params['enabled']
-        except KeyError as err:
-            raise DataError('params misses %s' % err)
-        if not enabled:
-            return params
-        return fn(params)
-    return wrapper
-
-
 def strip_ephemeral(record):
     '''strip ephemeral record fields such as host names, instance details, authentication'''
     ret = record.copy()

@@ -13,13 +13,13 @@ from .. import cloud
 from ..tools.retrying import retrying, EAgain
 from ..connection.cache import get_connection, assert_connection, connection_cache_key, drop_connection, ConnectionCacheError
 from ..connection.contextmanager import connection as connection_ctx
-from data import brief, when_enabled
-from common import RESULT_ERROR, RESULT_PASSED
+from data import brief
+from common import RESULT_ERROR, RESULT_PASSED, CLOUD_DRIVER_MAXWAIT
+from params import when_enabled
 
 logger = logging.getLogger(__name__)
 
 CLOUD_CREATE_WAIT=10
-CLOUD_DRIVER_MAXWAIT=60
 CREATE_ATTEMPTS=360
 SETUP_ATTEMPTS = 30
 SETUP_SETTLEWAIT = 30
