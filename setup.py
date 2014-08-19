@@ -13,7 +13,7 @@ setup(name='dva',
     provides='dva',
     install_requires=['PyYAML', 'aaargh'],
     packages=[
-        'dva', 'dva.test', 'dva.cloud', 'dva.work', 'dva.tools', 'dva.connection'
+        'dva', 'dva.test', 'dva.cloud', 'dva.work', 'dva.tools', 'dva.connection', 'dva.report'
         ],
     data_files=[
              ('share/dva/hwp', glob.glob('hwp/*.yaml')),
