@@ -71,18 +71,19 @@ def get_overall_result(data, verbose=False):
     Get human-readable representation of the result; partitioned by ami
     returns a tuple of an overal result and list of tuples overal_result, [(ami_resutl, ami_log), ...]
     """
-    agg_data = aggregate.apply(data, 'ami', 'cloudhwname')
+    agg_data = aggregate.apply(data, 'region', 'arch', 'itype', 'ami', 'cloudhwname')
     ret = RESULT_PASSED
     log = []
-    for ami in agg_data:
-        ami_log = []
-        sub_result, sub_log = get_hwp_result(agg_data[ami], verbose)
-        if sub_result != RESULT_PASSED and ret == RESULT_PASSED:
-            ret = sub_result
-        ami_header = '# %s: %s' % (ami, ret)
-        sub_log.insert(0, '-' * len(ami_header))
-        sub_log.insert(0, ami_header)
-        sub_log.insert(0, '')
-        # ami
-        log.append((sub_result, '\n'.join(sub_log)))
+    for region in agg_data:
+        for arch in agg_data[region]:
+            for itype in agg_data[region][arch]:
+                for ami in agg_data[region][arch][itype]:
+                    ami_log = []
+                    sub_result, sub_log = get_hwp_result(agg_data[region][arch][itype][ami], verbose)
+                    if sub_result != RESULT_PASSED and ret == RESULT_PASSED:
+                        ret = sub_result
+                    ami_header = '%s %s %s %s: %s' % (region, arch, itype, ami, ret)
+                    sub_log.insert(0, '-' * len(ami_header))
+                    sub_log.insert(0, ami_header)
+                    log.append((sub_result, '\n'.join(sub_log)))
     return ret, log
