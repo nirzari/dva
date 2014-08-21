@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+from gevent import monkey; monkey.patch_all()
 import sys
 import logging
 import argparse
@@ -8,6 +9,7 @@ import re
 from dva.tools import catching
 # load all testing modules
 from dva.test import *
+from dva.report.bug_main import DEFAULT_URL, DEFAULT_COMPONENT, DEFAULT_PRODUCT
 
 RE_ANY = re.compile('.*')
 
@@ -27,7 +29,7 @@ class LogAction(argparse.Action):
         setattr(namespace, self.dest, value.upper())
 
 APP.arg('-l', '--loglevel', help='set log level', action=LogAction, default='WARNING',
-        choices=['DEBUG', 'ERROR', 'INFO', 'WARNING', 'debug', 'error', 'info', 'warning']) 
+        choices=['DEBUG', 'ERROR', 'INFO', 'WARNING', 'debug', 'error', 'info', 'warning'])
 APP.arg('-c', '--conf', help='use conf file', default=None)
 
 
@@ -52,7 +54,7 @@ def svalidate(loglevel, conf, istream, ostream, test_whitelist, test_blacklist, 
 @APP.cmd_arg('-s', '--stage-whitelist', help='regexp stagename list', default=['.*'], nargs='+', metavar='PATTERN')
 @APP.cmd_arg('-S', '--stage-blacklist', help='regexp stagename list', default=[], nargs='+', metavar='PATTERN')
 @APP.cmd_arg('-n', '--no-action', help='take no action', action='store_true')
-@APP.cmd_arg('-p', '--pool_size', help='greenlet pool size', default=128, type=int)
+@APP.cmd_arg('-P', '--pool_size', help='greenlet pool size', default=128, type=int)
 def validate(loglevel, conf, istream, ostream, test_whitelist, test_blacklist, stage_whitelist, stage_blacklist, no_action, pool_size):
     logging.basicConfig(level=getattr(logging, loglevel))
     from dva.work.data_parallel_main import main
@@ -69,5 +71,20 @@ def result(loglevel, conf, istream, ostream, verbose):
     from dva.report.main import main
     return main(conf, istream, ostream, verbose)
 
+
+@APP.cmd(help='report result as bugzilla')
+@APP.cmd_arg('-i', '--istream', help='input filename', type=argparse.FileType('r'), default=sys.stdin)
+@APP.cmd_arg('-o', '--ostream', help='output filename', type=argparse.FileType('w'), default=sys.stdout)
+@APP.cmd_arg('-u', '--user', help='bz username', default=None)
+@APP.cmd_arg('-p', '--password', help='bz password', default=None)
+@APP.cmd_arg('-U', '--url', help='bz URL', default=DEFAULT_URL)
+@APP.cmd_arg('-C', '--component', help='bz component', default=DEFAULT_COMPONENT)
+@APP.cmd_arg('-R', '--product', help='bz product', default=DEFAULT_PRODUCT)
+@APP.cmd_arg('-V', '--verbose', help='print even passed test logs', action='store_true')
+@APP.cmd_arg('-P', '--pool_size', help='greenlet pool size', default=128, type=int)
+def bugzilla(loglevel, conf, istream, ostream, user, password, url, component, product, verbose, pool_size):
+    logging.basicConfig(level=getattr(logging, loglevel))
+    from dva.report.bug_main import main
+    return main(conf, istream, ostream, user, password, url, component, product, verbose, pool_size)
 
 sys.exit(APP.run())
