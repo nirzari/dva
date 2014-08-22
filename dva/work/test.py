@@ -60,6 +60,12 @@ def test_execute(params):
         # not caught in the test case but means the test failed
         params['test']['result'] = RESULT_FAILED
         params['test']['exception'] = traceback.format_exc()
+    else:
+        # no assertion errors detected --- check all cmd logs
+        test_cmd_results = [cmd['result'] for cmd in test_obj.log if 'result' in cmd]
+        test_result = RESULT_ERROR in test_cmd_results and RESULT_ERROR or RESULT_PASSED
+        test_result = RESULT_FAILED in test_cmd_results and RESULT_FAILED or RESULT_PASSED
+        params['test']['result'] = test_result
     finally:
         params['test']['log'] = test_obj.log
     return params
