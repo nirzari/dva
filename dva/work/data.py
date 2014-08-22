@@ -106,6 +106,7 @@ def expand_record_tests(record):
     assert type(record) is dict
     app_filter = lambda test_class: getattr(test_class, 'applicable', defaultdict(lambda: None))
     not_filter = lambda test_class: getattr(test_class, 'not_applicable', defaultdict(lambda: None))
+    tags = lambda test_class: getattr(test_class, 'tags', ['default'])
     record['test_stages'] = \
     { stage: \
         [
@@ -113,7 +114,11 @@ def expand_record_tests(record):
                 applicability_factory(applicable=app_filter(TEST_CLASSES[test_name]), \
                                         not_applicable=not_filter(TEST_CLASSES[test_name]))(record) and \
                 any([re.match(pattern, test_name) for pattern in record.get('test_whitelist', ['.*'])]) and \
-                not any([re.match(pattern, test_name) for pattern in record.get('test_blacklist', [])])
+                not any([re.match(pattern, test_name) for pattern in record.get('test_blacklist', [])]) and \
+                any([re.match(pattern, tag) for tag in tags(TEST_CLASSES[test_name]) \
+                    for pattern in record.get('tags_whitelist', ['default'])]) and \
+                not any([re.match(pattern, tag) for tag in tags(TEST_STAGES[test_name]) \
+                    for pattern in record.get('tags_blacklist', [])])
         ]
         for stage in sorted(TEST_STAGES) if \
             any([re.match(pattern, stage) for pattern in record.get('stage_whitelist', ['.*'])]) and \
@@ -152,7 +157,7 @@ def save_result(stream, result):
         with open(stream, 'w') as fd:
             ysafe_dump_all([[result]], fd, Dumper=Dumper)
 
-    
+
 
 def brief(record):
     '''return a brief info about the record'''

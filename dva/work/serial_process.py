@@ -5,7 +5,7 @@ import time
 import logging
 import traceback
 from stage import create_instance, attempt_ssh, allow_root_login, global_setup_script, terminate_instance
-from test import execute_tests 
+from test import execute_tests
 from common import RESULT_ERROR
 from stage import STAGES, StageError
 
@@ -40,7 +40,7 @@ def process(params):
     finally:
         if terminate:
             yield terminate_instance(params)
-   
+
 def required_actions_count(params):
     total = 0
     for item in params:

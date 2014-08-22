@@ -27,11 +27,13 @@ def target(ostream, params):
 
 
 
-def main(conf, istream, ostream, test_whitelist, test_blacklist, stage_whitelist, stage_blacklist, no_action, pool_size):
+def main(conf, istream, ostream, test_whitelist, test_blacklist, stage_whitelist, stage_blacklist,
+            tags_whitelist, tags_blacklist, no_action, pool_size):
     ''' main parallel-data worker function'''
     global TOTAL
     params = dict(test_whitelist=test_whitelist, test_blacklist=test_blacklist,
                     stage_whitelist=stage_whitelist, stage_blacklist=stage_blacklist,
+                    tags_whitelist=tags_whitelist, tags_blacklist=tags_blacklist,
                    enabled=not no_action)
     params = load(istream, config_file=conf, augment=params)
     TOTAL = required_actions_count(params)
