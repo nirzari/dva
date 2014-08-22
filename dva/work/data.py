@@ -26,7 +26,9 @@ DEFAULT_FIELDS = {
     'bmap': {}
 }
 
-EPHEMERAL_FIELDS = ['credentials', 'global_setup_script', 'instance', 'ssh', 'test_stages', 'user_data']
+EPHEMERAL_FIELDS = ['credentials', 'global_setup_script', 'instance', 'ssh', 'test_stages', 'user_data',
+        'bmap', 'enabled', 'userdata', 'test_whitelist', 'test_blacklist', 'stage_whitelist', 'stage_blacklist',
+        'tags_whitelist', 'tags_blacklist']
 RE_ALL = re.compile('.*')
 
 class DataError(Exception):
