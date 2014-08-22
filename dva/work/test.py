@@ -63,8 +63,8 @@ def test_execute(params):
     else:
         # no assertion errors detected --- check all cmd logs
         test_cmd_results = [cmd['result'] for cmd in test_obj.log if 'result' in cmd]
-        test_result = RESULT_ERROR in test_cmd_results and RESULT_ERROR or RESULT_PASSED
         test_result = RESULT_FAILED in test_cmd_results and RESULT_FAILED or RESULT_PASSED
+        test_result = RESULT_ERROR in test_cmd_results and RESULT_ERROR or test_result
         params['test']['result'] = test_result
     finally:
         params['test']['log'] = test_obj.log
