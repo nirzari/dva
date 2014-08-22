@@ -1,5 +1,6 @@
 import os
 import re
+import random
 import logging
 from collections import defaultdict
 from ..tools.registry import TEST_STAGES, TEST_CLASSES
@@ -136,7 +137,7 @@ def normalize_record(record):
     # to prevent any missing fields
     return dict(DEFAULT_FIELDS.items() + record.items())
 
-def load(path, config_file=None, augment={}):
+def load(path, config_file=None, augment={}, shuffle=True):
     '''load data and process it; returns list of expanded records
        all **kvs are propagated to the data
     '''
@@ -146,6 +147,9 @@ def load(path, config_file=None, augment={}):
         record.update(augment)
         ret.extend([expand_record_tests(record) for record in expand_record_arch( \
                         record_cloud_config(normalize_record(record), config_file))])
+    # shuffle to avoid single region exhaustion
+    if shuffle:
+        random.shuffle(ret)
     return ret
 
 def save_result(stream, result):
