@@ -92,15 +92,15 @@ def attempt_ssh(params):
         try:
             with connection_ctx(hostname, user, ssh_key) as con:
                 assert_connection(con)
-        except (StitchesConnectionException, ExpectFailed) as err:
+        except EAgain as err:
             logger.debug('%s %s %s connection failure: %s --- trying other user', hostname, user, ssh_key, err)
         else:
             # found user --- break
             logger.debug('%s found user: %s', hostname, user)
             break
     else:
-        # no user was able to log-in yet --- retry
-        raise StitchesConnectionException('%s: retrying' % hostname)
+        # no user was able to log-in (yet) --- retry
+        raise EAgain('not able to connect to %s with any user: %s' % (hostname, SSH_USERS))
 
     params['ssh']['user'] = user
     return params
