@@ -115,6 +115,12 @@ BETA_6.5:
 RHEL_6.5:
     <<: *RHEL_6ANY
 
+BETA_6.6:
+    <<: *BETA_6ANY
+
+RHEL_6.6:
+    <<: *RHEL_6ANY
+
 BETA_7.0:
     <<: *RHEL_7ANY
     iptables: true

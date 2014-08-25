@@ -164,6 +164,43 @@ ANY_REGION: &ANY_REGION
         rhui-REGION-rhel-server-rh-common: true
         rhui-REGION-rhel-server-source-rh-common: false
         rhui-REGION-rhel-server-debug-rh-common: false
+    BETA_6.6:
+        <<: *HAS_RHEL_SOURCE
+        <<: *HAS_RHEL_SOURCE_BETA
+        rhui-REGION-client-config-server-6: true
+        rhui-REGION-client-config-server-6-beta: true
+        rhui-REGION-rhel-server-releases: true
+        rhui-REGION-rhel-server-releases-beta: true
+        rhui-REGION-rhel-server-releases-optional: true
+        rhui-REGION-rhel-server-releases-optional-beta: true
+        rhui-REGION-rhel-server-releases-optional-source: false
+        rhui-REGION-rhel-server-releases-optional-source-beta: false
+        rhui-REGION-rhel-server-releases-source: false
+        rhui-REGION-rhel-server-releases-source-beta: false
+        rhui-REGION-rhel-server-debug-rhscl: false
+        rhui-REGION-rhel-server-debug-supplementary: false
+        rhui-REGION-rhel-server-rhscl: true
+        rhui-REGION-rhel-server-source-rhscl: false
+        rhui-REGION-rhel-server-source-supplementary: false
+        rhui-REGION-rhel-server-supplementary: false
+    RHEL_6.6:
+        <<: *HAS_RHEL_SOURCE
+        <<: *HAS_RHEL_SOURCE_BETA
+        rhui-REGION-client-config-server-6: true
+        rhui-REGION-rhel-server-releases: true
+        rhui-REGION-rhel-server-releases-optional: true
+        rhui-REGION-rhel-server-releases-optional-source: false
+        rhui-REGION-rhel-server-releases-source: false
+        rhui-REGION-rhel-server-debug-rhscl: false
+        rhui-REGION-rhel-server-debug-supplementary: false
+        rhui-REGION-rhel-server-rhscl: true
+        rhui-REGION-rhel-server-source-rhscl: false
+        rhui-REGION-rhel-server-source-supplementary: false
+        rhui-REGION-rhel-server-supplementary: false
+        rhui-REGION-rhel-server-rh-common: true
+        rhui-REGION-rhel-server-source-rh-common: false
+        rhui-REGION-rhel-server-debug-rh-common: false
+
     BETA_7.0:
         rhui-REGION-client-config-server-7-beta: true
         rhui-REGION-rhel-server-releases-beta: true
