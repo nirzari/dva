@@ -16,9 +16,9 @@ setup(name='dva',
         'dva', 'dva.test', 'dva.cloud', 'dva.work', 'dva.tools', 'dva.connection', 'dva.report'
         ],
     data_files=[
-             ('share/dva/hwp', glob.glob('hwp/*.yaml')),
-             ('share/dva/data', glob.glob('data/*')),
-             ('share/dva/examples', glob.glob('examples/*.yaml')),
+             ('/usr/share/dva/hwp', glob.glob('hwp/*.yaml')),
+             ('/usr/share/dva/data', glob.glob('data/*')),
+             ('/usr/share/dva/examples', glob.glob('examples/*.yaml')),
              ('/etc', ['etc/dva.yaml'])
     ],
     classifiers=[
