@@ -91,6 +91,7 @@ RHEL_6.5:
     <<: *RHEL_6ANY
 BETA_6.6:
     <<: *BETA_6ANY
+    /var/spool/plymouth/boot.log: [var_log_t, plymouthd_spool_t]
 RHEL_6.6:
     <<: *RHEL_6ANY
 FEDORA_20:
