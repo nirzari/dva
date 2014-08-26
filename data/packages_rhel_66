@@ -53,6 +53,7 @@ checkpolicy
 chkconfig
 cifs-utils
 cloud-init
+cloud-utils-growpart
 coreutils
 coreutils-libs
 cpio
@@ -78,6 +79,8 @@ cyrus-sasl-lib
 cyrus-sasl-plain
 dash
 db4
+db4-cxx
+db4-devel
 db4-utils
 dbus
 dbus-glib
@@ -100,6 +103,7 @@ dmraid-events
 dosfstools
 dracut
 dracut-kernel
+dracut-modules-growroot
 dstat
 e2fsprogs
 e2fsprogs-libs
@@ -133,6 +137,8 @@ gamin
 gawk
 gdb
 gdbm
+gdbm-devel
+gdk-pixbuf2
 gettext
 ghostscript
 ghostscript-fonts
@@ -140,6 +146,8 @@ giflib
 glib2
 glibc
 glibc-common
+glibc-devel
+glibc-headers
 gmp
 gnupg2
 gnutls
@@ -198,6 +206,7 @@ kbd
 kbd-misc
 kernel
 kernel-firmware
+kernel-headers
 kexec-tools
 keyutils
 keyutils-libs
@@ -236,6 +245,7 @@ libaio
 libasyncns
 libattr
 libblkid
+libbasicobjects
 libcap
 libcap-ng
 libcgroup
@@ -297,7 +307,6 @@ libsepol
 libsndfile
 libss
 libssh2
-libsss_autofs
 libsss_idmap
 libstdc++
 libtalloc
@@ -329,6 +338,7 @@ ltrace
 lua
 lvm2
 lvm2-libs
+lzo
 m2crypto
 m4
 mailcap
@@ -343,6 +353,7 @@ mesa-dri-filesystem
 mesa-dri1-drivers
 mesa-libGL
 mesa-libGLU
+mesa-private-llvm
 microcode_ctl
 mingetty
 mlocate
@@ -382,6 +393,8 @@ openssh-clients
 openssh-server
 openssl
 oprofile
+p11-kit
+p11-kit-trust
 pam
 pam_krb5
 pam_passwdqc
@@ -485,7 +498,10 @@ pygpgme
 pytalloc
 python
 python-argparse
+python-backports
+python-backports-ssl_match_hostname
 python-boto
+python-chardet
 python-cheetah
 python-configobj
 python-crypto
@@ -495,6 +511,8 @@ python-ethtool
 python-gudev
 python-iniparse
 python-iwlib
+python-jsonpatch
+python-jsonpointer
 python-kerberos
 python-krbV
 python-ldap
@@ -505,14 +523,19 @@ python-matplotlib
 python-netaddr
 python-nose
 python-nss
+python-ordereddict
 python-paramiko
 python-prettytable
 python-pycurl
 python-pygments
+python-requests
 python-rhsm
 python-setuptools
 python-simplejson
+python-six
+python-sssdconfig
 python-urlgrabber
+python-urllib3
 pytz
 ql2100-firmware
 ql2200-firmware
@@ -535,6 +558,8 @@ redhat-lsb-core
 redhat-lsb-graphics
 redhat-lsb-printing
 redhat-release-server
+redhat-support-lib-python
+redhat-support-tool
 rfkill
 rh-amazon-rhui-client
 rhino
@@ -571,12 +596,22 @@ setuptool
 sg3_utils-libs
 sgpio
 shadow-utils
+shared-mime-info
 slang
 smartmontools
+snappy
 sos
 sqlite
 sssd
+sssd-ad
 sssd-client
+sssd-common
+sssd-common-pac
+sssd-ipa
+sssd-krb5
+sssd-krb5-common
+sssd-ldap
+sssd-proxy
 strace
 subscription-manager
 sudo
@@ -596,6 +631,7 @@ time
 tmpwatch
 trace-cmd
 traceroute
+ttmkfdir
 tzdata
 tzdata-java
 udev
@@ -621,6 +657,7 @@ xml-common
 xmlrpc-c
 xmlrpc-c-client
 xorg-x11-drv-ati-firmware
+xorg-x11-fonts-Type1
 xorg-x11-font-utils
 xz
 xz-libs
