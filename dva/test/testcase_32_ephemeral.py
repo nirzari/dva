@@ -41,6 +41,7 @@ class testcase_32_ephemeral(Testcase):
         else:
             mkfs_opt = ''
 
+        devices = []
         for bdev in ephemerals:
             name = bdev['name']
             if (prod in ['RHEL', 'BETA']) and (ver.startswith('5.')):
@@ -61,11 +62,14 @@ class testcase_32_ephemeral(Testcase):
             self.get_return_value(connection, 'fdisk -l %s | grep \'^Disk\'' % name, 30)
             if self.get_result(connection, 'grep \'%s \' /proc/mounts  | wc -l' % name, 5) == '0':
                 # device is not mounted, doing fs creation
-                # test: mkfs
-                if self.get_return_value(connection, 'mkfs.%s %s %s' % (fstype, mkfs_opt, name), 1000) == 0:
-                    # create mount-point
-                    if self.get_return_value(connection, 'mkdir -p /tmp/mnt-%s' % basename(name), 5) == 0:
-                        # test: mount
-                        self.get_return_value(connection, 'mount -t %s %s /tmp/mnt-%s' % (fstype, name, basename(name)), 60)
+                devices.append(name)
 
+
+        mkfs_commands = ['mkfs.%s %s %s' % (fstype, mkfs_opt, name) for name in devices]
+        assert self.ping_pong(connection, ' & '.join(mkfs_commands) + ' & echo MKFS', '(?s).*\r\nMKFS.*'), "call mkfs_commands failed"
+        assert self.ping_pong(connection, 'wait && echo WAIT', '(?s).*\r\nWAIT.*', 1000), "wait failed?!?!"
+        dest_names = ['/tmp/mnt-%s' % basename(name) for name in devices]
+        self.get_return_value(connection, 'mkdir -p ' + ' '.join(dest_names))
+        mount_commands = ['mount -t %s %s /tmp/mnt-%s' % (fstype, name, basename(name)) for name in devices]
+        self.get_return_value(connection, ' && '.join(mount_commands))
         return self.log
