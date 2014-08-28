@@ -110,11 +110,11 @@ def main(config, istream, ostream, user=None, password=None, url=DEFAULT_URL,
                     logger.debug(itype)
                     for ami in agg_data[region][version][arch][itype]:
                         logger.debug(ami)
-                        statuses.append(lambda: process_ami_record(ami, version, arch, region, itype, user, password,
-                             agg_data[region][version][arch][itype][ami], url=url,
-                             component=component, product=product))
+                        statuses.append((ami, version, arch, region, itype, user, password,
+                             agg_data[region][version][arch][itype][ami], url,
+                             component, product))
     pool = Pool(size=pool_size)
-    statuses = pool.map(lambda item: item(), statuses)
+    statuses = pool.map(lambda args: process_ami_record(*args), statuses)
     for bug, ami, status in statuses:
         save_result(ostream, dict(bug=bug, id=ami, status=status))
     return all([status == RESULT_PASSED for _, status, _ in statuses]) and 0 or 1
