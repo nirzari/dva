@@ -7,7 +7,7 @@ import logging
 import bugzilla
 import tempfile
 import aggregate
-from ..tools.retrying import retrying
+from ..tools.retrying import retrying, EAgain
 from ..work.data import load_yaml, save_result
 from ..work.common import RESULT_PASSED
 from result import get_hwp_result
@@ -52,7 +52,10 @@ def create_bug(connection, summary, version, arch, component=DEFAULT_COMPONENT, 
 @retrying(maxtries=MAXTRIES, sleep=SLEEP, final_exception=AssertionError)
 def assert_bug(connection, bug):
     '''assert a bug exists'''
-    return connection.getbug(bug.bug_id)
+    try:
+        return connection.getbug(bug.bug_id)
+    except bugzilla.Fault as err:
+        raise EAgain(err)
 
 @retrying(maxtries=MAXTRIES, sleep=SLEEP)
 def create_bug_log_attachment(connection, bug, ami, data):
