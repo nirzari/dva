@@ -64,6 +64,8 @@ class testcase_32_ephemeral(Testcase):
                 # device is not mounted, doing fs creation
                 devices.append(name)
 
+        if not devices:
+            return self.log
 
         mkfs_commands = ['mkfs.%s %s %s' % (fstype, mkfs_opt, name) for name in devices]
         assert self.ping_pong(connection, ' & '.join(mkfs_commands) + ' & echo MKFS', '(?s).*\r\nMKFS.*'), "call mkfs_commands failed"
