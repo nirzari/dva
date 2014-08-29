@@ -8,16 +8,17 @@
       yum -y install xdelta
       touch /userdata_test
       date >> /userdata_test
-  bmap: &BMAP
+  bmap:
   - {delete_on_termination: true, name: /dev/sda1, size: '15'}
-  - {ephemeral_name: ephemeral0, name: /dev/sdf}
 - arch: 'i386'
   cpu: '1'
   memory: '1700000'
   cloudhwname: m1.small
   virtualization: 'paravirtual'
   userdata: *USERDATA
-  bmap: *BMAP
+  bmap: &BMAP
+  - {delete_on_termination: true, name: /dev/sda1, size: '15'}
+  - {ephemeral_name: ephemeral0, name: /dev/sdf}
 - arch: 'i386'
   cpu: '2'
   memory: '1700000'
