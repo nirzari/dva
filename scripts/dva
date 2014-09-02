@@ -80,6 +80,12 @@ def result(loglevel, conf, istream, ostream, verbose):
     from dva.report.main import main
     return main(conf, istream, ostream, verbose)
 
+@APP.cmd(help='summary of result')
+@APP.cmd_arg('-i', '--istream', help='input filename', type=argparse.FileType('r'), default=sys.stdin)
+def summary(loglevel, conf, istream, ostream, verbose):
+    logging.basicConfig(level=getattr(logging, loglevel))
+    from dva.report.summary_main import main
+    return main(conf, istream)
 
 @APP.cmd(help='report result as bugzilla')
 @APP.cmd_arg('-i', '--istream', help='input filename', type=argparse.FileType('r'), default=sys.stdin)
