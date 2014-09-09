@@ -22,7 +22,7 @@ except ImportError:
 logger = logging.getLogger(__name__)
 
 
-def main(istream):
+def main(config, istream):
     logger.debug('starting generation from file %s',istream)
     data = load_yaml(istream)
     agg_data = aggregate.apply(data, 'region', 'version', 'arch', 'itype', 'ami', 'cloudhwname')
