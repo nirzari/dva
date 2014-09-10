@@ -23,7 +23,8 @@ CONFIG_FILES = ['dva.yaml', '~/.dva.yaml', '/etc/dva.yaml']
 DEFAULT_FIELDS = {
     'cloud': 'ec2',
     'enabled': True,
-    'bmap': {}
+    'bmap': {},
+    'userdata': ''
 }
 
 EPHEMERAL_FIELDS = ['credentials', 'global_setup_script', 'instance', 'ssh', 'test_stages', 'user_data',
