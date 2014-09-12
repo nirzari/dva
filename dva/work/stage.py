@@ -14,7 +14,7 @@ from ..tools.retrying import retrying, EAgain
 from ..connection.cache import get_connection, assert_connection, connection_cache_key, drop_connection, ConnectionCacheError
 from ..connection.contextmanager import connection as connection_ctx
 from data import brief
-from common import RESULT_ERROR, RESULT_PASSED, CLOUD_DRIVER_MAXWAIT
+from common import RESULT_ERROR, RESULT_PASSED, RESULT_SKIP, CLOUD_DRIVER_MAXWAIT
 from params import when_enabled
 
 logger = logging.getLogger(__name__)
@@ -37,6 +37,9 @@ class InstantiationError(StageError):
 class SetUpError(StageError):
     '''Setting-up instance failed'''
 
+class SkipError(StageError):
+    '''skip particular data entry'''
+
 
 def stage(fn):
     '''stage handling decorator; saves stage name and status'''
@@ -47,6 +50,11 @@ def stage(fn):
         try:
             ret = fn(params)
             params['stage_result'] = RESULT_PASSED
+        except SkipError as err:
+            # e.g. hw not supported in region
+            params['stage_exception'] = traceback.format_exc()
+            params['stage_result'] = RESULT_SKIP
+            raise SkipError('%s: %s' % (fn.__name__, err))
         except StageError as err:
             params['stage_exception'] = traceback.format_exc()
             params['stage_result'] = RESULT_ERROR
@@ -73,6 +81,10 @@ def create_instance(params):
     except cloud.base.TemporaryCloudException as err:
         logger.debug('Temporary Cloud Exception: %s', err)
         raise EAgain(err)
+    except cloud.base.SkipCloudException as err:
+        # this instance type can't be created in this region
+        logger.debug('Skip Cloud Exception: %s', err)
+        raise SkipError(err)
     return params
 
 @stage
