@@ -99,7 +99,7 @@ def main(config, istream, ostream, user=None, password=None, url=DEFAULT_URL,
     logger.debug('got credentials: %s, %s', user, password)
     statuses = []
     data = load_yaml(istream)
-    agg_data = aggregate.apply(data, 'region', 'version', 'arch', 'itype', 'ami', 'cloudhwname')
+    agg_data = aggregate.nested(data, 'region', 'version', 'arch', 'itype', 'ami', 'cloudhwname')
     for region in agg_data:
         logger.debug(region)
         for version in agg_data[region]:
