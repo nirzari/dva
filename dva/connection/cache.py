@@ -23,9 +23,9 @@ class ConnectionCacheError(Exception):
     '''bad things happen in connection cache'''
 
 def connection_cache_key(params):
-    '''params to connection cache key tuple: (threading.current_thread().ident, host, user, key)'''
+    '''params to connection cache key tuple: (None, host, user, key)'''
     try:
-        return id(getcurrent()), params['hostname'], params['ssh']['user'], params['ssh']['keyfile']
+        return None, params['hostname'], params['ssh']['user'], params['ssh']['keyfile']
     except KeyError as err:
         # some key is missing in params
         raise ConnectionCacheError('params missing key: %s' % err)
