@@ -21,8 +21,29 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
+def transform(ami, version, arch, region, itype, agg_data):
+    for hwp in agg_data:
+        print hwp
+        sub_result, sub_log = get_hwp_result(agg_data[hwp], False)
+        return region, sub_result
 
 def main(config, istream):
     logger.debug('starting generation from file %s',istream)
     data = load_yaml(istream)
+    statuses = []
     agg_data = aggregate.apply(data, 'region', 'version', 'arch', 'itype', 'ami', 'cloudhwname')
+    for region in agg_data:
+        logger.debug(region)
+        for version in agg_data[region]:
+            logger.debug(version)
+            for arch in agg_data[region][version]:
+                logger.debug(arch)
+                for itype in agg_data[region][version][arch]:
+                    logger.debug(itype)
+                    for ami in agg_data[region][version][arch][itype]:
+                        logger.debug(ami)
+                        statuses.append((ami, version, arch, region, itype, agg_data[region][version][arch][itype][ami]))
+    pool = Pool(128)
+    statuses = pool.map(lambda args: transform(*args), statuses)
+    for region, status in statuses:
+        print("Region: %s; Status: %s" % (region,status))
