@@ -4,16 +4,19 @@ the test execution module
 
 
 import sys
+import time
 import logging
 import traceback
-from stitches import Expect, ExpectFailed
-from stitches.connection import StitchesConnectionException
+from stitches import Expect
 from ..tools.registry import TEST_CLASSES, TEST_STAGES
 from ..tools.logged import logged
 from ..connection.cache import get_connection, assert_connection, connection_cache_key, drop_connection, ConnectionCacheError
 from data import brief
 from params import when_enabled
+from params import reload  as params_reload
 from common import RESULT_ERROR, RESULT_PASSED, RESULT_FAILED
+from ..tools.retrying import retrying
+from ..connection.contextmanager import connection as connection_ctx
 
 
 logger = logging.getLogger(__name__)
@@ -70,17 +73,45 @@ def test_execute(params):
         params['test']['log'] = test_obj.log
     return params
 
+@when_enabled
+def reboot_instance(params):
+    '''call a reboot'''
+    _, host, user, ssh_key = connection_cache_key(params)
+    with connection_ctx(host, user, ssh_key) as connection:
+        assert_connection(connection)
+        Expect.expect_retval(connection, 'nohup sleep 1s && nohup reboot &')
+    time.sleep(10)
 
-def execute_tests(original_params):
+@when_enabled
+@retrying(maxtries=60, sleep=3, loglevel=logging.DEBUG)
+def wait_boot_instance(params):
+    '''wait till the instance boots'''
+    params_reload(params)
+    _, host, user, ssh_key = connection_cache_key(params)
+    with connection_ctx(host, user, ssh_key) as connection:
+        assert_connection(connection)
+
+def execute_tests(original_params, stage_name):
     '''perform all tests'''
-    original_params['stage_name'] = 'execute_tests'
-    for stage_name in sorted(original_params['test_stages']):
-        for test_name in sorted(original_params['test_stages'][stage_name]):
-            params = original_params.copy()
-            params['test'] = {
-                'name': test_name,
-                'stage': stage_name
-            }
-            params = test_execute(params)
-            yield params
+    for test_name in sorted(original_params['test_stages'][stage_name]):
+        params = original_params.copy()
+        params['test'] = {
+            'name': test_name,
+            'stage': stage_name
+        }
+        params = test_execute(params)
+        yield params
 
+def execute_stages(params):
+    '''perform all stages'''
+    params['stage_name'] = 'execute_tests'
+    stages = sorted(params['test_stages'])
+    # reboots inbetween stages
+    for stage_name in stages[:-1]:
+        for result in execute_tests(params, stage_name):
+            yield result
+        reboot_instance(params)
+        wait_boot_instance(params)
+    # no reboot at last stage exit
+    for result in execute_tests(params, stages[-1]):
+        yield result

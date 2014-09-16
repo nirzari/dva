@@ -33,4 +33,7 @@ class testcase_60_yum_update(Testcase):
         else:
             self.get_return_value(connection, 'yum -y install kernel', 900)
         self.get_return_value(connection, 'yum -y update', 1800)
+        if (prod in ['RHEL', 'BETA'] and ver.startswith('5.')) or prod == 'FEDORA':
+            # Preparing the latest kernel for stage2 testing
+            self.get_return_value(connection, r'sed -i "s,\(default\)=.*$,\1=0," /boot/grub/menu.lst')
         return self.log
