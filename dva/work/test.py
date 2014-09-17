@@ -17,6 +17,7 @@ from params import reload  as params_reload
 from common import RESULT_ERROR, RESULT_PASSED, RESULT_FAILED
 from ..tools.retrying import retrying
 from ..connection.contextmanager import connection as connection_ctx
+from ..connection.contextmanager import alive_connection
 
 
 logger = logging.getLogger(__name__)
@@ -51,34 +52,31 @@ def test_execute(params):
         params['test_result'] = 'error: missing test/stage: %s/%s' % (test_name, test_stage)
         raise TestingError('missing test: %' % test_name)
 
-    # cached connection; tries reconnecting
-    con = get_connection(params)
-
-    # perform the testing
-    try:
-        test_obj = test_cls()
-        test_obj.test(con, params)
-        logger.debug('%s %s %s succeeded', hostname, test_stage, test_name)
-    except AssertionError as err:
-        # not caught in the test case but means the test failed
-        params['test']['result'] = RESULT_FAILED
-        params['test']['exception'] = traceback.format_exc()
-    else:
-        # no assertion errors detected --- check all cmd logs
-        test_cmd_results = [cmd['result'] for cmd in test_obj.log if 'result' in cmd]
-        test_result = RESULT_FAILED in test_cmd_results and RESULT_FAILED or RESULT_PASSED
-        test_result = RESULT_ERROR in test_cmd_results and RESULT_ERROR or test_result
-        params['test']['result'] = test_result
-    finally:
-        params['test']['log'] = test_obj.log
+    # asserts connection; tries reconnecting
+    with alive_connection(params) as con:
+        # perform the testing
+        try:
+            test_obj = test_cls()
+            test_obj.test(con, params)
+            logger.debug('%s %s %s succeeded', hostname, test_stage, test_name)
+        except AssertionError as err:
+            # not caught in the test case but means the test failed
+            params['test']['result'] = RESULT_FAILED
+            params['test']['exception'] = traceback.format_exc()
+        else:
+            # no assertion errors detected --- check all cmd logs
+            test_cmd_results = [cmd['result'] for cmd in test_obj.log if 'result' in cmd]
+            test_result = RESULT_FAILED in test_cmd_results and RESULT_FAILED or RESULT_PASSED
+            test_result = RESULT_ERROR in test_cmd_results and RESULT_ERROR or test_result
+            params['test']['result'] = test_result
+        finally:
+            params['test']['log'] = test_obj.log
     return params
 
 @when_enabled
 def reboot_instance(params):
     '''call a reboot'''
-    _, host, user, ssh_key = connection_cache_key(params)
-    with connection_ctx(host, user, ssh_key) as connection:
-        assert_connection(connection)
+    with alive_connection(params) as connection:
         Expect.expect_retval(connection, 'nohup sleep 1s && nohup reboot &')
     time.sleep(10)
 
