@@ -11,21 +11,39 @@ from ..tools.retrying import retrying, EAgain
 from .. import cloud, work
 from stitches import Connection, Expect, ExpectFailed
 from stitches.connection import StitchesConnectionException
+from weakref import WeakKeyDictionary
 
 
 CONNECTION_ATTEMPTS = 120
 CONNECTION_ATTEMPTS_RETRY_AFTER = 1
-CONNECTION_CACHE = {}
+CONNECTION_CACHE = WeakKeyDictionary()
 
 logger = logging.getLogger(__name__)
 
 class ConnectionCacheError(Exception):
     '''bad things happen in connection cache'''
 
+class Key(object):
+    '''weak-ref-key wrapper for namedtuple'''
+    from collections import namedtuple
+    KeyTuple = namedtuple('KeyTuple', ['obj', 'host', 'user', 'key'])
+
+    def __init__(self, obj, host, user, key):
+        self.value = Key.KeyTuple(obj, host, user, key)
+
+    def __getitem__(self, key):
+        return self.value[key]
+
+    def __len__(self):
+        return len(self.value)
+
+    def __int__(self, key):
+        return key in self.value
+
 def connection_cache_key(params):
     '''params to connection cache key tuple: (None, host, user, key)'''
     try:
-        return None, params['hostname'], params['ssh']['user'], params['ssh']['keyfile']
+        return Key(id(getcurrent()), params['hostname'], params['ssh']['user'], params['ssh']['keyfile'])
     except KeyError as err:
         # some key is missing in params
         raise ConnectionCacheError('params missing key: %s' % err)
@@ -37,7 +55,7 @@ def drop_connection(params):
         CONNECTION_CACHE.pop(key).disconnect()
         logger.debug('dropped: %s', key)
     except KeyError as err:
-        raise ConnectionCacheError('closing a non-existent connection: %s' % (key,))
+        pass
 
 def assert_connection(connection):
     '''assert a connection is alive; wel... ;) at a point in time'''
@@ -45,7 +63,8 @@ def assert_connection(connection):
         logger.debug('asserting connection: %s', connection)
         Expect.ping_pong(connection, 'uname', 'Linux')
         logger.debug('asserting connection: %s passed', connection)
-    except (IOError, socket.error, socket.timeout, StitchesConnectionException, ExpectFailed, paramiko.ssh_exception.AuthenticationException) as err:
+    except (IOError, socket.error, socket.timeout, StitchesConnectionException, ExpectFailed, \
+            paramiko.ssh_exception.AuthenticationException, paramiko.ssh_exception.SSHException) as err:
         logger.debug('asserting %s got: %s(%s): %s', connection, type(err), err, traceback.format_exc())
         raise EAgain(err)
 
