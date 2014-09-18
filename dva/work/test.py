@@ -53,24 +53,24 @@ def test_execute(params):
         raise TestingError('missing test: %' % test_name)
 
     # asserts connection; tries reconnecting
-    with alive_connection(params) as con:
-        # perform the testing
-        try:
-            test_obj = test_cls()
-            test_obj.test(con, params)
-            logger.debug('%s %s %s succeeded', hostname, test_stage, test_name)
-        except AssertionError as err:
-            # not caught in the test case but means the test failed
-            params['test']['result'] = RESULT_FAILED
-            params['test']['exception'] = traceback.format_exc()
-        else:
-            # no assertion errors detected --- check all cmd logs
-            test_cmd_results = [cmd['result'] for cmd in test_obj.log if 'result' in cmd]
-            test_result = RESULT_FAILED in test_cmd_results and RESULT_FAILED or RESULT_PASSED
-            test_result = RESULT_ERROR in test_cmd_results and RESULT_ERROR or test_result
-            params['test']['result'] = test_result
-        finally:
-            params['test']['log'] = test_obj.log
+    con = get_connection(params)
+    # perform the testing
+    try:
+        test_obj = test_cls()
+        test_obj.test(con, params)
+        logger.debug('%s %s %s succeeded', hostname, test_stage, test_name)
+    except AssertionError as err:
+        # not caught in the test case but means the test failed
+        params['test']['result'] = RESULT_FAILED
+        params['test']['exception'] = traceback.format_exc()
+    else:
+        # no assertion errors detected --- check all cmd logs
+        test_cmd_results = [cmd['result'] for cmd in test_obj.log if 'result' in cmd]
+        test_result = RESULT_FAILED in test_cmd_results and RESULT_FAILED or RESULT_PASSED
+        test_result = RESULT_ERROR in test_cmd_results and RESULT_ERROR or test_result
+        params['test']['result'] = test_result
+    finally:
+        params['test']['log'] = test_obj.log
     return params
 
 @when_enabled
@@ -89,18 +89,15 @@ def wait_boot_instance(params):
     with connection_ctx(host, user, ssh_key) as connection:
         assert_connection(connection)
 
-def execute_tests(original_params, stage_name):
+def execute_tests(original_params, stage_name, pool_size=None):
     '''perform all tests'''
-    for test_name in sorted(original_params['test_stages'][stage_name]):
-        params = original_params.copy()
-        params['test'] = {
-            'name': test_name,
-            'stage': stage_name
-        }
-        params = test_execute(params)
-        yield params
+    from gevent.pool import Pool
+    pool = Pool(size=pool_size)
+    for result in pool.map(test_execute, [dict(test=dict(name=test_name, stage=stage_name), **original_params) \
+            for test_name in sorted(original_params['test_stages'][stage_name])]):
+        yield result
 
-def execute_stages(params):
+def execute_stages(params, pool_size=None):
     '''perform all stages'''
     params['stage_name'] = 'execute_tests'
     stages = sorted(params['test_stages'])
@@ -109,7 +106,7 @@ def execute_stages(params):
         if not params['test_stages'][stage_name]:
             logger.debug('skipping empty test stage: %s', stage_name)
             continue # avoid rebooting on empty stages
-        for result in execute_tests(params, stage_name):
+        for result in execute_tests(params, stage_name, pool_size=None):
             yield result
         reboot_instance(params)
         wait_boot_instance(params)
