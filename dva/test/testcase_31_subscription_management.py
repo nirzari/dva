@@ -8,7 +8,7 @@ class testcase_31_subscription_management(Testcase):
     """
     stages = ['stage1']
     applicable = {'product': '(?i)RHEL|BETA', 'version': 'OS (> 5.5)'}
-    tags = ['default']
+    tags = ['default', 'content']
 
     def test(self, connection, params):
         """ Perform test """
