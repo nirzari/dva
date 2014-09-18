@@ -11,39 +11,22 @@ from ..tools.retrying import retrying, EAgain
 from .. import cloud, work
 from stitches import Connection, Expect, ExpectFailed
 from stitches.connection import StitchesConnectionException
-from weakref import WeakKeyDictionary
+from weakref import WeakValueDictionary
 
 
 CONNECTION_ATTEMPTS = 120
 CONNECTION_ATTEMPTS_RETRY_AFTER = 1
-CONNECTION_CACHE = WeakKeyDictionary()
+CONNECTION_CACHE = WeakValueDictionary()
 
 logger = logging.getLogger(__name__)
 
 class ConnectionCacheError(Exception):
     '''bad things happen in connection cache'''
 
-class Key(object):
-    '''weak-ref-key wrapper for namedtuple'''
-    from collections import namedtuple
-    KeyTuple = namedtuple('KeyTuple', ['obj', 'host', 'user', 'key'])
-
-    def __init__(self, obj, host, user, key):
-        self.value = Key.KeyTuple(obj, host, user, key)
-
-    def __getitem__(self, key):
-        return self.value[key]
-
-    def __len__(self):
-        return len(self.value)
-
-    def __int__(self, key):
-        return key in self.value
-
 def connection_cache_key(params):
     '''params to connection cache key tuple: (None, host, user, key)'''
     try:
-        return Key(id(getcurrent()), params['hostname'], params['ssh']['user'], params['ssh']['keyfile'])
+        return id(getcurrent()), params['hostname'], params['ssh']['user'], params['ssh']['keyfile']
     except KeyError as err:
         # some key is missing in params
         raise ConnectionCacheError('params missing key: %s' % err)
@@ -80,18 +63,18 @@ def get_connection(params):
     except KeyError as err:
         logger.debug('cache miss: %s', key)
         _, host, user, ssh_key = key
-        CONNECTION_CACHE[key] = Connection(host, user, ssh_key)
-        logger.debug('got new connection: %s', CONNECTION_CACHE[key])
+        CONNECTION_CACHE[key] = connection =  Connection(host, user, ssh_key)
+        logger.debug('got new connection: %s', connection)
 
     try:
         # make sure the connection is alive
-        assert_connection(CONNECTION_CACHE[key])
-        logger.debug('got alive connection: %s', CONNECTION_CACHE[key])
+        assert_connection(connection)
+        logger.debug('got alive connection: %s', connection)
     except EAgain as err:
         # something went wrong --- drop and keep retrying
-        logger.debug('got %s asserting %s --- dropping connection', err, CONNECTION_CACHE[key])
+        logger.debug('got %s asserting %s --- dropping connection', err, connection)
         drop_connection(params)
         work.params.reload(params)
         raise err
     # got connection --- return
-    return CONNECTION_CACHE[key]
+    return connection
