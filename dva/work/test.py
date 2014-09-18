@@ -108,6 +108,9 @@ def execute_stages(params):
     stages = sorted(params['test_stages'])
     # reboots inbetween stages
     for stage_name in stages[:-1]:
+        if not params['test_stages'][stage_name]:
+            logger.debug('skipping empty test stage: %s', stage_name)
+            continue # avoid rebooting on empty stages
         for result in execute_tests(params, stage_name):
             yield result
         reboot_instance(params)
