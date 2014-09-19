@@ -19,6 +19,8 @@ from ..tools.retrying import retrying
 from ..connection.contextmanager import connection as connection_ctx
 from ..connection.contextmanager import alive_connection
 
+TEST_WORKER_POOL_SIZE = 10 # the default SSH MaxSessions value
+
 
 logger = logging.getLogger(__name__)
 
@@ -89,7 +91,7 @@ def wait_boot_instance(params):
     with connection_ctx(host, user, ssh_key) as connection:
         assert_connection(connection)
 
-def execute_tests(original_params, stage_name, pool_size=None):
+def execute_tests(original_params, stage_name, pool_size=TEST_WORKER_POOL_SIZE):
     '''perform all tests'''
     from gevent.pool import Pool
     pool = Pool(size=pool_size)
@@ -97,7 +99,7 @@ def execute_tests(original_params, stage_name, pool_size=None):
             for test_name in sorted(original_params['test_stages'][stage_name])]):
         yield result
 
-def execute_stages(params, pool_size=None):
+def execute_stages(params, pool_size=TEST_WORKER_POOL_SIZE):
     '''perform all stages'''
     params['stage_name'] = 'execute_tests'
     stages = sorted(params['test_stages'])
