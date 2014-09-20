@@ -132,7 +132,7 @@ def execute_stages(params, pool_size=TEST_WORKER_POOL_SIZE):
         if not params['test_stages'][stage_name]:
             logger.debug('skipping empty test stage: %s', stage_name)
             continue # avoid rebooting on empty stages
-        for result in execute_tests(params, stage_name, pool_size=None):
+        for result in execute_tests(params, stage_name, pool_size=pool_size):
             yield result
         reboot_instance(params)
         wait_boot_instance(params)
