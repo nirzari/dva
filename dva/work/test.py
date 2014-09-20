@@ -91,13 +91,37 @@ def wait_boot_instance(params):
     with connection_ctx(host, user, ssh_key) as connection:
         assert_connection(connection)
 
+def process_dependencies(stage_name, test_names):
+    '''process process dependencies for particular stage name; yields etages of dep tree'''
+    from ..tools.dependency import Graph, Vertex, bfs
+    # build the graph
+    root = Vertex(value='__root__')
+    graph = Graph(vertices=set([root]))
+    for test_name in test_names:
+        logger.debug('processing testcase %s dependencies', test_name)
+        test_vertex = Vertex(value=test_name)
+        dep_names = getattr(TEST_CLASSES[test_name], 'after',  [])
+        # in case no dependencies were specified, the test depends on the root vertice
+        deps = [Vertex(dep_name) for dep_name in dep_names if dep_name in test_names] or [root]
+        for dep in deps:
+            logger.debug('adding dependency %s, %s', dep, test_vertex)
+            graph.add_edge(dep, test_vertex)
+
+    # evaluate dependencies; skip the root-only etage
+    for vertex_etage in bfs(graph, root):
+        test_names = [vertex.value for vertex in vertex_etage if vertex.value != '__root__']
+        yield test_names
+
+
+
 def execute_tests(original_params, stage_name, pool_size=TEST_WORKER_POOL_SIZE):
     '''perform all tests'''
     from gevent.pool import Pool
     pool = Pool(size=pool_size)
-    for result in pool.map(test_execute, [dict(test=dict(name=test_name, stage=stage_name), **original_params) \
-            for test_name in sorted(original_params['test_stages'][stage_name])]):
-        yield result
+    for test_etage in process_dependencies(stage_name, original_params['test_stages'][stage_name]):
+        for result in pool.map(test_execute, [dict(test=dict(name=test_name, stage=stage_name), **original_params) \
+                for test_name in test_etage]):
+            yield result
 
 def execute_stages(params, pool_size=TEST_WORKER_POOL_SIZE):
     '''perform all stages'''
