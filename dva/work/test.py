@@ -17,6 +17,9 @@ from params import reload  as params_reload
 from common import RESULT_ERROR, RESULT_PASSED, RESULT_FAILED
 from ..tools.retrying import retrying
 from ..connection.contextmanager import connection as connection_ctx
+from ..connection.contextmanager import alive_connection
+
+TEST_WORKER_POOL_SIZE = 10 # the default SSH MaxSessions value
 
 
 logger = logging.getLogger(__name__)
@@ -51,9 +54,8 @@ def test_execute(params):
         params['test_result'] = 'error: missing test/stage: %s/%s' % (test_name, test_stage)
         raise TestingError('missing test: %' % test_name)
 
-    # cached connection; tries reconnecting
+    # asserts connection; tries reconnecting
     con = get_connection(params)
-
     # perform the testing
     try:
         test_obj = test_cls()
@@ -76,9 +78,7 @@ def test_execute(params):
 @when_enabled
 def reboot_instance(params):
     '''call a reboot'''
-    _, host, user, ssh_key = connection_cache_key(params)
-    with connection_ctx(host, user, ssh_key) as connection:
-        assert_connection(connection)
+    with alive_connection(params) as connection:
         Expect.expect_retval(connection, 'nohup sleep 1s && nohup reboot &')
     time.sleep(10)
 
@@ -91,18 +91,39 @@ def wait_boot_instance(params):
     with connection_ctx(host, user, ssh_key) as connection:
         assert_connection(connection)
 
-def execute_tests(original_params, stage_name):
-    '''perform all tests'''
-    for test_name in sorted(original_params['test_stages'][stage_name]):
-        params = original_params.copy()
-        params['test'] = {
-            'name': test_name,
-            'stage': stage_name
-        }
-        params = test_execute(params)
-        yield params
+def process_dependencies(stage_name, test_names):
+    '''process process dependencies for particular stage name; yields etages of dep tree'''
+    from ..tools.dependency import Graph, Vertex, bfs
+    # build the graph
+    root = Vertex(value='__root__')
+    graph = Graph(vertices=set([root]))
+    for test_name in test_names:
+        logger.debug('processing testcase %s dependencies', test_name)
+        test_vertex = Vertex(value=test_name)
+        dep_names = getattr(TEST_CLASSES[test_name], 'after',  [])
+        # in case no dependencies were specified, the test depends on the root vertice
+        deps = [Vertex(dep_name) for dep_name in dep_names if dep_name in test_names] or [root]
+        for dep in deps:
+            logger.debug('adding dependency %s, %s', dep, test_vertex)
+            graph.add_edge(dep, test_vertex)
 
-def execute_stages(params):
+    # evaluate dependencies; skip the root-only etage
+    for vertex_etage in bfs(graph, root):
+        test_names = [vertex.value for vertex in vertex_etage if vertex.value != '__root__']
+        yield test_names
+
+
+
+def execute_tests(original_params, stage_name, pool_size=TEST_WORKER_POOL_SIZE):
+    '''perform all tests'''
+    from gevent.pool import Pool
+    pool = Pool(size=pool_size)
+    for test_etage in process_dependencies(stage_name, original_params['test_stages'][stage_name]):
+        for result in pool.map(test_execute, [dict(test=dict(name=test_name, stage=stage_name), **original_params) \
+                for test_name in test_etage]):
+            yield result
+
+def execute_stages(params, pool_size=TEST_WORKER_POOL_SIZE):
     '''perform all stages'''
     params['stage_name'] = 'execute_tests'
     stages = sorted(params['test_stages'])
@@ -111,7 +132,7 @@ def execute_stages(params):
         if not params['test_stages'][stage_name]:
             logger.debug('skipping empty test stage: %s', stage_name)
             continue # avoid rebooting on empty stages
-        for result in execute_tests(params, stage_name):
+        for result in execute_tests(params, stage_name, pool_size=pool_size):
             yield result
         reboot_instance(params)
         wait_boot_instance(params)
