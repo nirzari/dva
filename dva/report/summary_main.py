@@ -31,19 +31,16 @@ def main(config, istream):
     logger.debug('starting generation from file %s',istream)
     data = load_yaml(istream)
     statuses = []
-    agg_data = aggregate.apply(data, 'region', 'version', 'arch', 'itype', 'ami', 'cloudhwname')
-    for region in agg_data:
-        logger.debug(region)
-        for version in agg_data[region]:
-            logger.debug(version)
-            for arch in agg_data[region][version]:
-                logger.debug(arch)
-                for itype in agg_data[region][version][arch]:
-                    logger.debug(itype)
-                    for ami in agg_data[region][version][arch][itype]:
-                        logger.debug(ami)
-                        statuses.append((ami, version, arch, region, itype, agg_data[region][version][arch][itype][ami]))
-    pool = Pool(128)
-    statuses = pool.map(lambda args: transform(*args), statuses)
-    for region, status in statuses:
-        print("Region: %s; Status: %s" % (region,status))
+#    agg_data = aggregate.flat(data, 'region', 'version', 'arch', 'itype', 'ami', 'cloudhwname')
+    agg_data = aggregate.flat(data, 'cloudhwname')
+    for hwname,data in agg_data.items():
+        print('HWNAME: %s' % hwname[0])
+        for test in data:
+            if test.has_key('test'):
+                if test['test']['result'] != 'passed':
+                    print('   Failed test %s' % test['test']['name'])
+#    statuses.append((ami, version, arch, region, itype, agg_data[region][version][arch][itype][ami]))
+#    pool = Pool(128)
+#    statuses = pool.map(lambda args: transform(*args), statuses)
+#    for region, status in statuses:
+#        print("Region: %s; Status: %s" % (region,status))
