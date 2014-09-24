@@ -21,12 +21,6 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
-def transform(ami, version, arch, region, itype, agg_data):
-    for hwp in agg_data:
-        print hwp
-        sub_result, sub_log = get_hwp_result(agg_data[hwp], False)
-        return region, sub_result
-
 def print_failed(data, aname, area, whitelist):
     agg_data = aggregate.flat(data, area)
     for name,data in agg_data.items():
@@ -36,7 +30,6 @@ def print_failed(data, aname, area, whitelist):
                 if test['test']['result'] != 'passed':
                     if test['test']['name'] not in whitelist:
                         print('   Failed test %s' % test['test']['name'])
-
 
 def main(config, istream,test_whitelist,compare):
     logger.debug('starting generation from file %s',istream)
