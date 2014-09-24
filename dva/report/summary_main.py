@@ -27,22 +27,30 @@ def transform(ami, version, arch, region, itype, agg_data):
         sub_result, sub_log = get_hwp_result(agg_data[hwp], False)
         return region, sub_result
 
-def main(config, istream,test_whitelist):
-    logger.debug('starting generation from file %s',istream)
-    data = load_yaml(istream)
-    statuses = []
-#    agg_data = aggregate.flat(data, 'region', 'version', 'arch', 'itype', 'ami', 'cloudhwname')
-    whitelist = [str(item) for item in test_whitelist[0].split(',')]
-    agg_data = aggregate.flat(data, 'cloudhwname')
-    for hwname,data in agg_data.items():
-        print('HWNAME: %s' % hwname[0])
+def print_failed(data, aname, area, whitelist):
+    agg_data = aggregate.flat(data, area)
+    for name,data in agg_data.items():
+        print('%s %s' % (aname, name[0]))
         for test in data:
             if test.has_key('test'):
                 if test['test']['result'] != 'passed':
                     if test['test']['name'] not in whitelist:
                         print('   Failed test %s' % test['test']['name'])
-#    statuses.append((ami, version, arch, region, itype, agg_data[region][version][arch][itype][ami]))
-#    pool = Pool(128)
-#    statuses = pool.map(lambda args: transform(*args), statuses)
-#    for region, status in statuses:
-#        print("Region: %s; Status: %s" % (region,status))
+
+
+def main(config, istream,test_whitelist,compare):
+    logger.debug('starting generation from file %s',istream)
+    data = load_yaml(istream)
+    comparelist = [str(item) for item in compare[0].split(',')]
+    whitelist = [str(item) for item in test_whitelist[0].split(',')]
+    for area in comparelist:
+        if area == 'cloudhwname':
+            aname = 'HWNAME:'
+            print_failed(data,aname,area,whitelist)
+        elif area == 'region':
+            aname = 'REGION:'
+            print_failed(data,aname,area,whitelist)
+        else:
+            area = 'ami'
+            aname = 'AMI:'
+            print_failed(data,aname,area,whitelist)
