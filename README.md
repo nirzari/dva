@@ -9,10 +9,12 @@ Installation
 
 Usage
 -----
-* dva vaidate < data.yaml > result.yaml
+* dva validate < data.yaml > result.yaml
 * dva bugzilla < result.yaml > buglist.yaml
 * # dva result < result.yaml > result.txt
 * for complete options list see dva --help
+* For summary use:
+  - dva -c /etc/validation.yaml summary -i ~/validace.yaml
 
 See also
 --------
