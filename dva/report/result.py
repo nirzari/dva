@@ -22,10 +22,19 @@ def command_repr(command):
 
 def get_test_result(test_data, verbose=False):
     '''get formated test result'''
-    ret = test_data['result']
-    log = ['%s:%s: %s' % (test_data['stage'], test_data['name'], test_data['result'])]
-    if test_data['result'] != RESULT_PASSED or verbose:
-         for command in test_data['log']:
+    try:
+        ret = test_data['result']
+    except KeyError:
+        # no result -- test skipped
+        ret = 'RESULT_SKIP'
+    try:
+        test_log = test_data['log']
+    except KeyError:
+        # no test log
+        test_log = []
+    log = ['%s:%s: %s' % (test_data['stage'], test_data['name'], ret)]
+    if ret != RESULT_PASSED or verbose:
+         for command in test_log:
             log.extend(command_repr(command))
     return ret, log
 
