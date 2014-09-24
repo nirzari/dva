@@ -27,18 +27,20 @@ def transform(ami, version, arch, region, itype, agg_data):
         sub_result, sub_log = get_hwp_result(agg_data[hwp], False)
         return region, sub_result
 
-def main(config, istream):
+def main(config, istream,test_whitelist):
     logger.debug('starting generation from file %s',istream)
     data = load_yaml(istream)
     statuses = []
 #    agg_data = aggregate.flat(data, 'region', 'version', 'arch', 'itype', 'ami', 'cloudhwname')
+    whitelist = [str(item) for item in test_whitelist[0].split(',')]
     agg_data = aggregate.flat(data, 'cloudhwname')
     for hwname,data in agg_data.items():
         print('HWNAME: %s' % hwname[0])
         for test in data:
             if test.has_key('test'):
                 if test['test']['result'] != 'passed':
-                    print('   Failed test %s' % test['test']['name'])
+                    if test['test']['name'] not in whitelist:
+                        print('   Failed test %s' % test['test']['name'])
 #    statuses.append((ami, version, arch, region, itype, agg_data[region][version][arch][itype][ami]))
 #    pool = Pool(128)
 #    statuses = pool.map(lambda args: transform(*args), statuses)
