@@ -21,7 +21,6 @@ from ..connection.contextmanager import alive_connection
 
 TEST_WORKER_POOL_SIZE = 10 # the default SSH MaxSessions value
 
-
 logger = logging.getLogger(__name__)
 
 class TestingError(Exception):
@@ -108,9 +107,12 @@ def process_dependencies(stage_name, test_names):
             graph.add_edge(dep, test_vertex)
 
     # evaluate dependencies; skip the root-only etage
+    ret = []
     for vertex_etage in bfs(graph, root):
         test_names = [vertex.value for vertex in vertex_etage if vertex.value != '__root__']
-        yield test_names
+        # FIXME: not sure why yield test_names does mess with the greenlets
+        ret.append(test_names)
+    return ret
 
 
 
