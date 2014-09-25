@@ -6,6 +6,7 @@ __dva's validation. again.__
 Installation
 ------------
 * sudo python setup.py install
+* or sudo pip install dva
 
 Usage
 -----
