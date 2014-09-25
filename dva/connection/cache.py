@@ -47,7 +47,7 @@ def assert_connection(connection):
         Expect.ping_pong(connection, 'uname', 'Linux')
         logger.debug('asserting connection: %s passed', connection)
     except (IOError, socket.error, socket.timeout, StitchesConnectionException, ExpectFailed, \
-            paramiko.ssh_exception.AuthenticationException, paramiko.ssh_exception.SSHException) as err:
+            paramiko.ssh_exception.AuthenticationException, paramiko.ssh_exception.SSHException, EOFError) as err:
         logger.debug('asserting %s got: %s(%s): %s', connection, type(err), err, traceback.format_exc())
         raise EAgain(err)
 
