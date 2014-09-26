@@ -17,6 +17,7 @@ RE_ANY = re.compile('.*')
 LOG = None
 APP = aaargh.App(description="dva's validation. again.")
 
+
 class LogAction(argparse.Action):
     '''custom logging action'''
     def __call__(self, parser, namespace, value, option_string=None):
