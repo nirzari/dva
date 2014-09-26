@@ -24,8 +24,12 @@ Notes
 -----
 * please bare in mind the limit of opened file-descriptors is usualy 1024
 * `--parallel-tests` and `--parallel-instances` multiply the usage of file-descriptors needed
+* sshd puts a limit the number of sessions users may open in parallel
+* usually `--parallel-tests=10` is the maximum possible
 * dva runs in a single process in [gevent](http://www.gevent.org/) pools
 * consider running multiple `dva` instances for large inputs
+* not-setting `--sorted-mode` has the benefit of breaking waves in test execution
+* for the same reason, image instantiation is randomized through cloud regions
 
 See also
 --------
