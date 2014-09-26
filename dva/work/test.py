@@ -116,17 +116,17 @@ def process_dependencies(stage_name, test_names):
 
 
 
-def execute_tests(original_params, stage_name, pool_size=TEST_WORKER_POOL_SIZE):
-    '''perform all tests'''
+def execute_tests(original_params, stage_name, pool_size=TEST_WORKER_POOL_SIZE, sorted_mode=False):
+    '''perform all tests; if sorted_mode, test are sorted by both dependencies and names'''
     from gevent.pool import Pool
     pool = Pool(size=pool_size)
     for test_etage in process_dependencies(stage_name, original_params['test_stages'][stage_name]):
         for result in pool.map(test_execute, [dict(test=dict(name=test_name, stage=stage_name), **original_params) \
-                for test_name in test_etage]):
+                for test_name in sorted_mode and sorted(test_etage) or test_etage]):
             yield result
 
-def execute_stages(params, pool_size=TEST_WORKER_POOL_SIZE):
-    '''perform all stages'''
+def execute_stages(params, pool_size=TEST_WORKER_POOL_SIZE, sorted_mode=False):
+    '''perform all stages; sorted_mode, pool_size are propagated to `execute_tests`'''
     params['stage_name'] = 'execute_tests'
     stages = sorted(params['test_stages'])
     # reboots inbetween stages
@@ -134,7 +134,7 @@ def execute_stages(params, pool_size=TEST_WORKER_POOL_SIZE):
         if not params['test_stages'][stage_name]:
             logger.debug('skipping empty test stage: %s', stage_name)
             continue # avoid rebooting on empty stages
-        for result in execute_tests(params, stage_name, pool_size=pool_size):
+        for result in execute_tests(params, stage_name, pool_size=pool_size, sorted_mode=sorted_mode):
             yield result
         reboot_instance(params)
         wait_boot_instance(params)

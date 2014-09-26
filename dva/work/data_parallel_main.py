@@ -17,9 +17,9 @@ TOTAL=0
 REPORT_LOCK = RLock()
 
 
-def target(ostream, params, parallel_tests):
+def target(ostream, params, parallel_tests, sorted_mode):
     global PROCESSED, REPORT_LOCK, TOTAL
-    for result in process(params, pool_size=parallel_tests):
+    for result in process(params, pool_size=parallel_tests, sorted_mode=sorted_mode):
         with REPORT_LOCK:
             PROCESSED += 1
             print_progress_info(PROCESSED, TOTAL)
@@ -28,7 +28,7 @@ def target(ostream, params, parallel_tests):
 
 
 def main(conf, istream, ostream, test_whitelist, test_blacklist, stage_whitelist, stage_blacklist,
-            tags_whitelist, tags_blacklist, no_action, parallel_instances, parallel_tests):
+            tags_whitelist, tags_blacklist, no_action, parallel_instances, parallel_tests, sorted_mode):
     ''' main parallel-data worker function'''
     global TOTAL
     params = dict(test_whitelist=test_whitelist, test_blacklist=test_blacklist,
@@ -39,5 +39,5 @@ def main(conf, istream, ostream, test_whitelist, test_blacklist, stage_whitelist
     TOTAL = required_actions_count(params)
     print_progress_info(PROCESSED, TOTAL)
     pool = Pool(size=parallel_instances)
-    pool.map(lambda item: target(ostream, item, parallel_tests), params)
+    pool.map(lambda item: target(ostream, item, parallel_tests, sorted_mode), params)
 
