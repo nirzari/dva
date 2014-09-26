@@ -13,7 +13,7 @@ from stage import STAGES, StageError, SkipError
 logger = logging.getLogger(__name__)
 
 
-def process(params, pool_size=TEST_WORKER_POOL_SIZE):
+def process(params, pool_size=TEST_WORKER_POOL_SIZE, sorted_mode=False):
     '''process required acctions'''
     terminate = False
     try:
@@ -26,7 +26,7 @@ def process(params, pool_size=TEST_WORKER_POOL_SIZE):
         yield params
         params = global_setup_script(params)
         yield params
-        for test_result in execute_stages(params, pool_size=pool_size):
+        for test_result in execute_stages(params, pool_size=pool_size, sorted_mode=sorted_mode):
             yield test_result
     except SkipError as err:
         logger.debug('encountered skip error: %s', err)
@@ -55,6 +55,6 @@ def required_actions_count(params):
 
 def print_progress_info(actual, total):
     '''print progress info actual/total'''
-    print '# %s %2.2f%% (%s/%s)' % (time.ctime(), float(actual * 100)/total, actual, total)
+    print '# %s %2.2f%% (%s/%s)' % (time.ctime(), total and float((actual * 100)/total) or 0, actual, total)
 
 

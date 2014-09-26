@@ -63,12 +63,13 @@ def svalidate(loglevel, conf, istream, ostream, test_whitelist, test_blacklist, 
 @APP.cmd_arg('-n', '--no-action', help='take no action', action='store_true')
 @APP.cmd_arg('--parallel-instances', help='greenlet pool size', default=64, type=int)
 @APP.cmd_arg('--parallel-tests', help='greenlet pool size', default=4, type=int)
+@APP.cmd_arg('--sorted-mode', help='apply both dependency- and name-based sorting to test execution', action='store_true')
 def validate(loglevel, conf, istream, ostream, test_whitelist, test_blacklist, stage_whitelist, stage_blacklist,
-    tags_whitelist, tags_blacklist, no_action, parallel_instances, parallel_tests):
+    tags_whitelist, tags_blacklist, no_action, parallel_instances, parallel_tests, sorted_mode):
     logging.basicConfig(level=getattr(logging, loglevel))
     from dva.work.data_parallel_main import main
     return main(conf, istream, ostream, test_whitelist, test_blacklist, stage_whitelist, stage_blacklist,
-                tags_whitelist, tags_blacklist, no_action, parallel_instances, parallel_tests)
+                tags_whitelist, tags_blacklist, no_action, parallel_instances, parallel_tests, sorted_mode)
 
 
 @APP.cmd(help='report result')
