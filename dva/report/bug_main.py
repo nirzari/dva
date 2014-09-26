@@ -29,6 +29,7 @@ SLEEP=3
 
 def bugzilla_credentials(configfile):
     '''get bugzilla credentials from a config file'''
+    logger.debug('using hwp(arch) file: %s', configfile)
     config = load_yaml(configfile)
     return config['bugzilla']['user'], config['bugzilla']['password']
 
@@ -106,12 +107,12 @@ def process_ami_record_debug(ami, version, arch, region, itype, user, password, 
             ami_result = sub_result
         #bug.addcomment('# %s: %s\n%s' % (hwp, sub_result, '\n'.join(sub_log)))
     #bug.setstatus(ami_result == RESULT_PASSED and 'VERIFIED' or 'ON_QA')
-    return bug.bug_id, ami, ami_result
+    #return bug.bug_id, ami, ami_result
+    return 123456, ami, ami_result
 
 
-def main(config, istream, ostream, user=None, password=None, url=DEFAULT_URL,
-            component=DEFAULT_COMPONENT, product=DEFAULT_PRODUCT, verbose=False,
-            pool_size=128, debug_mode=True):
+def main(config, istream, ostream, user=None, password=None, url=DEFAULT_URL, component=DEFAULT_COMPONENT,
+         product=DEFAULT_PRODUCT, verbose=False, pool_size=128, debug_mode=True):
     user, password = bugzilla_credentials(config)
     logger.debug('got credentials: %s, %s', user, password)
     statuses = []
