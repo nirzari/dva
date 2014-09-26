@@ -55,6 +55,6 @@ def required_actions_count(params):
 
 def print_progress_info(actual, total):
     '''print progress info actual/total'''
-    print '# %s %2.2f%% (%s/%s)' % (time.ctime(), float(actual * 100)/total, actual, total)
+    print '# %s %2.2f%% (%s/%s)' % (time.ctime(), total and float((actual * 100)/total) or 0, actual, total)
 
 
