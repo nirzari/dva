@@ -3,10 +3,15 @@ dva
 
 __dva's validation. again.__
 
+Description
+-----------
+* `dva` is a tool to sanity-check instance images in cloud
+* primary focus is RHEL release validation in [EC2](http://aws.amazon.com/documentation/ec2/)
+
 Installation
 ------------
-* sudo python setup.py install
-* or sudo pip install dva
+* `sudo python setup.py install`
+* or `sudo pip install dva`
 
 Usage
 -----
