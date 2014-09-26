@@ -134,9 +134,7 @@ def main(config, istream, ostream, user=None, password=None, url=DEFAULT_URL, co
     if debug_mode:
         statuses = pool.map(lambda args: process_ami_record_debug(*args), statuses)
     else:
-        logger.debug('We would create bugzillas')
-        #statuses = pool.map(lambda args: process_ami_record(*args), statuses)
-        statuses = [['bug','ami','passed']]
+        statuses = pool.map(lambda args: process_ami_record(*args), statuses)
     for bug, ami, status in statuses:
         save_result(ostream, dict(bug=bug, id=ami, status=status))
     return all([status == RESULT_PASSED for _, status, _ in statuses]) and 0 or 1
