@@ -92,9 +92,26 @@ def process_ami_record(ami, version, arch, region, itype, user, password, ami_da
     bug.setstatus(ami_result == RESULT_PASSED and 'VERIFIED' or 'ON_QA')
     return bug.bug_id, ami, ami_result
 
+def process_ami_record_debug(ami, version, arch, region, itype, user, password, ami_data,
+        url=DEFAULT_URL, component=DEFAULT_COMPONENT, product=DEFAULT_PRODUCT, verbose=False):
+    '''process one ami record creating bug with comment per hwp'''
+    connection = connect(url, user, password)
+    summary = '%s %s %s %s %s' % (ami, version, arch, itype, region)
+    #bug = create_bug(connection, summary, version, arch, component, product)
+    #create_bug_log_attachment(connection, bug, ami, ami_data)
+    ami_result = RESULT_PASSED
+    for hwp in ami_data:
+        sub_result, sub_log = get_hwp_result(ami_data[hwp], verbose)
+        if sub_result not in [RESULT_PASSED, RESULT_SKIP] and ami_result == RESULT_PASSED:
+            ami_result = sub_result
+        #bug.addcomment('# %s: %s\n%s' % (hwp, sub_result, '\n'.join(sub_log)))
+    #bug.setstatus(ami_result == RESULT_PASSED and 'VERIFIED' or 'ON_QA')
+    return bug.bug_id, ami, ami_result
+
 
 def main(config, istream, ostream, user=None, password=None, url=DEFAULT_URL,
-            component=DEFAULT_COMPONENT, product=DEFAULT_PRODUCT, verbose=False, pool_size=128):
+            component=DEFAULT_COMPONENT, product=DEFAULT_PRODUCT, verbose=False,
+            pool_size=128, debug_mode=True):
     user, password = bugzilla_credentials(config)
     logger.debug('got credentials: %s, %s', user, password)
     statuses = []
@@ -114,7 +131,10 @@ def main(config, istream, ostream, user=None, password=None, url=DEFAULT_URL,
                              agg_data[region][version][arch][itype][ami], url,
                              component, product))
     pool = Pool(size=pool_size)
-    statuses = pool.map(lambda args: process_ami_record(*args), statuses)
+    if debug_mode:
+        statuses = pool.map(lambda args: process_ami_record_debug(*args), statuses)
+    else:
+        statuses = pool.map(lambda args: process_ami_record(*args), statuses)
     for bug, ami, status in statuses:
         save_result(ostream, dict(bug=bug, id=ami, status=status))
     return all([status == RESULT_PASSED for _, status, _ in statuses]) and 0 or 1
