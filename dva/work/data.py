@@ -132,7 +132,7 @@ def expand_record_tests(record):
 
 def normalize_record(record):
     '''return a record with normalized fields'''
-    assert type(record) is dict
+    assert type(record) is dict, 'invalid record type: %s' % type(record)
     # make sure all is lowercase and "safe"
     tmp = load_ns(record, leaf_processor=lambda value: type(value) is str and value.lower() or value)
     record = dump_ns(tmp)
@@ -145,6 +145,7 @@ def load(path, config_file=None, augment={}, shuffle=True):
        all **kvs are propagated to the data
     '''
     data = load_yaml(path)
+    assert type(data) is list, 'invalid data type: %s' % type(data)
     ret = []
     for record in data:
         record.update(augment)
