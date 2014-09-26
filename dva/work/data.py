@@ -44,7 +44,6 @@ def load_yaml(filename):
         return yload(filename, Loader=Loader)
 
     with open(filename) as datafd:
-        logger.debug('open filename as file: %s', datafd)
         data = yload(datafd, Loader=Loader)
     return data
 
