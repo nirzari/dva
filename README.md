@@ -18,6 +18,13 @@ Usage
 * for failure summary use: `dva summary -i result.yaml`
 * simulate valid execution: `dva validate -i data.yaml --parallel-tests=1 --sorted-mode`
 
+Notes
+-----
+* please bare in mind the limit of opened file-descriptors is usualy 1024
+* `--parallel-tests` and `--parallel-instances` multiply the usage of file-descriptors needed
+* dva runs in a single process in [gevent](http://www.gevent.org/) pools
+* consider running multiple `dva` instances for large inputs
+
 See also
 --------
 * [valid](https://github.com/RedHatQE/valid)
