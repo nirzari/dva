@@ -2,8 +2,11 @@ dva
 ===
 
 __dva's validation. again.__
-* `dva` is a tool to sanity-check instance images in cloud
-* primary focus is RHEL release validation in [EC2](http://aws.amazon.com/documentation/ec2/)
+* `dva` is a tool to sanity-check image instances in cloud
+* this is achieved by executing same test cases over various images and instance types
+* expected test results usually depend on OS (minor) version
+* primary focus is `RHEL` release validation in [EC2](http://aws.amazon.com/documentation/ec2/)
+* `OpenStack` and `Fedora` is supported, too
 
 Installation
 ------------
