@@ -22,6 +22,7 @@ Usage
 * for complete options list: `dva --help`
 * for failure summary use: `dva summary -i result.yaml`
 * simulate valid execution: `dva validate -i data.yaml --parallel-tests=1 --sorted-mode`
+* use custom test cases: `dva validate < data.yaml > result.yaml --test-modules=my.tests custom.tests`
 
 Notes
 -----
