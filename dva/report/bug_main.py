@@ -132,6 +132,7 @@ def main(config, istream, ostream, user=None, password=None, url=DEFAULT_URL, co
                              component, product))
     pool = Pool(size=pool_size)
     if debug_mode:
+        #There will be enhancement to have for each ami output in the file
         statuses = pool.map(lambda args: process_ami_record_debug(*args), statuses)
     else:
         statuses = pool.map(lambda args: process_ami_record(*args), statuses)
