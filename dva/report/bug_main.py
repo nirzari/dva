@@ -8,7 +8,7 @@ import bugzilla
 import tempfile
 import aggregate
 from ..tools.retrying import retrying, EAgain
-from ..work.data import load_yaml, save_result
+from ..work.data import load_yaml, save_result, set_config_filename
 from ..work.common import RESULT_PASSED, RESULT_SKIP
 from result import get_hwp_result
 from gevent.pool import Pool
@@ -29,6 +29,7 @@ SLEEP=3
 
 def bugzilla_credentials(configfile):
     '''get bugzilla credentials from a config file'''
+    configfile = set_config_filename(configfile)
     config = load_yaml(configfile)
     return config['bugzilla']['user'], config['bugzilla']['password']
 

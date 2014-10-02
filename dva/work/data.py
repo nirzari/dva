@@ -55,14 +55,20 @@ def arch_to_path(arch):
     logger.debug('using hwp(arch) file: %s', arch_files[0])
     return arch_files[0]
 
-def record_cloud_config(record, config_file=None):
-    '''put cloud config data into a record; first found config file is used'''
+def set_config_filename(config_file=None):
     if config_file is None:
         # no config file given, try locating some in default spots
         config_files = [filename for filename in CONFIG_FILES if os.path.exists(filename)]
         assert config_files, 'could not locate any config file; tried: %s' % CONFIG_FILES
         config_file = config_files[0]
-    logger.debug('using cloud config file: %s', config_file)
+
+    logger.debug('using config file: %s', config_file)
+    return config_file
+
+
+def record_cloud_config(record, config_file=None):
+    '''put cloud config data into a record; first found config file is used'''
+    config_file = set_config_filename(config_file)
     # e.g. record['cloud'] == 'ec2' -> config['cloud_access']['ec2']
     try:
         region = record['region']
