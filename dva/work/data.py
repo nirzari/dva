@@ -40,7 +40,6 @@ class ConfigError(Exception):
 
 def load_yaml(filename):
     ''' load yaml file'''
-    #logger.debug('filename file: %s', filename)
 
     if isinstance(filename, file):
         return yload(filename, Loader=Loader)
