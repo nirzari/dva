@@ -40,6 +40,7 @@ class ConfigError(Exception):
 
 def load_yaml(filename):
     ''' load yaml file'''
+
     if isinstance(filename, file):
         return yload(filename, Loader=Loader)
 
@@ -150,6 +151,7 @@ def load(path, config_file=None, augment={}, shuffle=True):
     '''load data and process it; returns list of expanded records
        all **kvs are propagated to the data
     '''
+
     data = load_yaml(path)
     assert type(data) is list, 'invalid data type: %s' % type(data)
     ret = []
