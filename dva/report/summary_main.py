@@ -21,7 +21,7 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
-def print_failed(data, aname, area, whitelist):
+def print_failed(data, aname, area, whitelist,area2='cloudhwname'):
     agg_data = aggregate.flat(data, area)
     for name,data in agg_data.items():
         print('%s %s' % (aname, name[0]))
@@ -29,10 +29,10 @@ def print_failed(data, aname, area, whitelist):
             if test.has_key('test'):
                 if test['test']['result'] != 'passed':
                     if test['test']['name'] not in whitelist:
-                        print('   Failed test %s' % test['test']['name'])
+                        print('   Failed test %s (%s)' % (test['test']['name'],test[area2]))
             else:
                 if test['stage_result'] != 'passed':
-                    print('!! Failed stage %s' % test['stage_name'])
+                    print('!! Failed stage %s (%s)' % (test['stage_name'],test[area2]))
 
 def main(config, istream,test_whitelist,compare):
     logger.debug('starting generation from file %s',istream)
@@ -42,7 +42,8 @@ def main(config, istream,test_whitelist,compare):
     for area in comparelist:
         if area == 'cloudhwname':
             aname = 'HWNAME:'
-            print_failed(data,aname,area,whitelist)
+            area2 = 'ami'
+            print_failed(data,aname,area,whitelist,area2)
         elif area == 'region':
             aname = 'REGION:'
             print_failed(data,aname,area,whitelist)
