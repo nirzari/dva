@@ -7,6 +7,7 @@ import logging
 import bugzilla
 import tempfile
 import aggregate
+import html #in order for this to work you need to do "pip install html"
 from ..tools.retrying import retrying, EAgain
 from ..work.data import load_yaml, save_result
 from ..work.common import RESULT_PASSED
@@ -33,6 +34,15 @@ def print_failed(data, aname, area, whitelist,area2='cloudhwname'):
             else:
                 if test['stage_result'] != 'passed':
                     print('!! Failed stage %s (%s)' % (test['stage_name'],test[area2]))
+
+def print_failed_html(data, aname, area, whitelist,area2='cloudhwname'):
+    agg_data = aggregate.flat(data, area)
+    table_data=[]
+    for name,data in agg_data.items():
+        for test in data:
+            pass
+    html_output = html.table(table_data)
+    print html_output
 
 def main(config, istream,test_whitelist,compare):
     logger.debug('starting generation from file %s',istream)
