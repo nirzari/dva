@@ -30,6 +30,9 @@ def print_failed(data, aname, area, whitelist):
                 if test['test']['result'] != 'passed':
                     if test['test']['name'] not in whitelist:
                         print('   Failed test %s' % test['test']['name'])
+            else:
+                if test['stage_result'] != 'passed':
+                    print('!! Failed stage %s' % test['stage_name'])
 
 def main(config, istream,test_whitelist,compare):
     logger.debug('starting generation from file %s',istream)
