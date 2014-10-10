@@ -44,20 +44,22 @@ def print_failed_html(data, aname, area, whitelist,area2='cloudhwname'):
     html_output = html.table(table_data)
     print html_output
 
-def main(config, istream,test_whitelist,compare):
+def main(config, istream,test_whitelist,compare,html):
     logger.debug('starting generation from file %s',istream)
     data = load_yaml(istream)
     comparelist = [str(item) for item in compare[0].split(',')]
     whitelist = [str(item) for item in test_whitelist[0].split(',')]
     for area in comparelist:
+        area2 = 'cloudhwname'
         if area == 'cloudhwname':
             aname = 'HWNAME:'
             area2 = 'ami'
-            print_failed(data,aname,area,whitelist,area2)
         elif area == 'region':
             aname = 'REGION:'
-            print_failed(data,aname,area,whitelist)
         else:
             area = 'ami'
             aname = 'AMI:'
-            print_failed(data,aname,area,whitelist)
+        if html:
+            print_failed_html(data,aname,area,whitelist,area2)
+        else:
+            print_failed(data,aname,area,whitelist,area2)
