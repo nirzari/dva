@@ -54,6 +54,10 @@ def test_execute(params):
         raise TestingError('missing test: %' % test_name)
 
     # asserts connection; tries reconnecting
+    # FIXME: data race condition somewhere resets the ssh user
+    # can't locate atm --- enforcing root /me ashamed
+    params = params.copy()
+    params['ssh']['user'] = 'root'
     con = get_connection(params)
     # perform the testing
     try:
