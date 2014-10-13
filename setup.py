@@ -4,14 +4,14 @@ from setuptools import setup
 import glob
 
 setup(name='dva',
-    version='0.1',
+    version='0.4',
     description="dva's validation. again.",
     author='dparalen',
     author_email='vetrisko@gmail.com',
     url='https://github.com/RedHatQE/dva',
     license="GPLv3+",
     provides='dva',
-    install_requires=['PyYAML', 'aaargh', 'stitches>=0.7', 'boto'],
+    install_requires=['PyYAML', 'aaargh', 'stitches>=0.7', 'boto', 'gevent','html'],
     packages=[
         'dva', 'dva.test', 'dva.cloud', 'dva.work', 'dva.tools', 'dva.connection', 'dva.report'
         ],
