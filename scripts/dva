@@ -103,12 +103,12 @@ def summary(loglevel, conf, istream,test_whitelist,compare,html):
 @APP.cmd_arg('-u', '--user', help='bz username', default=None)
 @APP.cmd_arg('-p', '--password', help='bz password', default=None)
 #added debug_mode which prevents to create bugs in Bugzilla. It prints everything to ostream instead
-@APP.cmd_arg('-d', '--debug_mode', help='debug mode - read only bugzilla', action='store_true')
+@APP.cmd_arg('-d', '--debug-mode', help='debug mode - read only bugzilla', action='store_true')
 @APP.cmd_arg('-U', '--url', help='bz URL', default=DEFAULT_URL)
 @APP.cmd_arg('-C', '--component', help='bz component', default=DEFAULT_COMPONENT)
 @APP.cmd_arg('-R', '--product', help='bz product', default=DEFAULT_PRODUCT)
 @APP.cmd_arg('-V', '--verbose', help='print even passed test logs', action='store_true')
-@APP.cmd_arg('-P', '--pool_size', help='greenlet pool size', default=64, type=int)
+@APP.cmd_arg('-P', '--pool-size', help='greenlet pool size', default=64, type=int)
 
 def bugzilla(loglevel, conf, istream, ostream, user, password, url, component, product, verbose, pool_size, debug_mode):
     logging.basicConfig(level=getattr(logging, loglevel))
