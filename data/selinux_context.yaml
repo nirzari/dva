@@ -94,6 +94,7 @@ BETA_6.6:
     /var/spool/plymouth/boot.log: [var_log_t, plymouthd_spool_t]
 RHEL_6.6:
     <<: *RHEL_6ANY
+    /var/spool/plymouth/boot.log: [var_log_t, plymouthd_spool_t]
 FEDORA_20:
     /var/cache/yum.*: [file_t,rpm_var_cache_t]
 
