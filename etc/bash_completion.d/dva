@@ -5,9 +5,9 @@
 # dva subsections, commands and options.
 
 _dva_tab() {
-  
+
   local dva_cur dva_options dva_sections grep_dva_sections optional_svalidate_args optional_result_args
-  
+
   COMPREPLY=()
   dva_cur=${COMP_WORDS[COMP_CWORD]}
   dva_options="-h --help -l --loglevel -c --conf"
@@ -16,18 +16,18 @@ _dva_tab() {
   optional_svalidate_args="-h --help -i --istream -o --ostream -t --test-whitelist \
                            -T --test-blacklist -s --stage-whitelist -S --stage-blacklist \
                            -g --tags-whitelist -G --tags-blacklist -n --no-action"
-  
+
   optional_result_args="-h --help -i --istream -o --ostream -V --verbose"
   if [[ $COMP_LINE == *\ -h?* ]] \
     || [[ $COMP_LINE == *--help?* ]]; then
       return
   fi
-  
+
   if [[ -z "${grep_dva_sections}" ]]; then
     COMPREPLY=( $( compgen -W "$dva_options $dva_sections" -- "$dva_cur" ) )
     return
   fi
-  
+
   #$COMP_LINE 2>&1 | egrep -q "^dva: error:" && return
   case "$grep_dva_sections" in
     svalidate)
