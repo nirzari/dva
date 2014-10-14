@@ -34,7 +34,7 @@ def print_failed(data, aname, area, whitelist,area2='cloudhwname'):
             else:
                 if test['stage_result'] == 'skip':
                     print('!! Skipped - most likely unsupported instance type in region. (%s)' % test[area2])
-                elif test['stage_result'] == 'failed':
+                elif test['stage_result'] != 'passed':
                     print('!! Failed stage %s (%s)' % (test['stage_name'],test[area2]))
 
 def print_failed_html(data, aname, area, whitelist,area2='cloudhwname'):
