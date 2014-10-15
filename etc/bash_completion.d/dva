@@ -16,8 +16,8 @@ _dva_tab() {
   optional_svalidate_args="-h --help -i --istream -o --ostream -t --test-whitelist \
                            -T --test-blacklist -s --stage-whitelist -S --stage-blacklist \
                            -g --tags-whitelist -G --tags-blacklist -n --no-action"
-
   optional_result_args="-h --help -i --istream -o --ostream -V --verbose"
+
   if [[ $COMP_LINE == *\ -h?* ]] \
     || [[ $COMP_LINE == *--help?* ]]; then
       return
@@ -33,13 +33,16 @@ _dva_tab() {
     svalidate)
       COMPREPLY=( $( compgen -W "$optional_svalidate_args" -- $dva_cur ) );;
     validate)
-      COMPREPLY=( $( compgen -W "$optional_svalidate_args -P --pool_size" -- $dva_cur ) );;
+      COMPREPLY=( $( compgen -W "$optional_svalidate_args -P --pool-size" -- $dva_cur ) );;
     result)
       COMPREPLY=( $( compgen -W "$optional_result_args" -- $dva_cur ) );;
+    summary)
+      COMPREPLY=( $( compgen -W "-h --help -i --istream -c --compare -t --test-whitelist \
+                                 -m --html" -- $dva_cur ) );;
     bugzilla)
       COMPREPLY=( $( compgen -W "$optional_result_args -u --user -p --password -U --url \
                                                        -C --component -R --product \
-                                                       -P --pool_size" -- $dva_cur ) );;
+                                                       -P --pool-size" -- $dva_cur ) );;
   esac
 
 }
