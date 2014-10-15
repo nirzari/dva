@@ -37,26 +37,36 @@ def print_failed(data, aname, area, whitelist,area2='cloudhwname'):
                 elif test['stage_result'] != 'passed':
                     print('!! Failed stage %s (%s)' % (test['stage_name'],test[area2]))
 
-def print_failed_html(data, aname, area, whitelist,area2='cloudhwname'):
+def print_xunit(data, aname, area):
     agg_data = aggregate.flat(data, area)
-    h = HTML('html')
-    t = h.table(border='1')
+    error = 0
+    fail = 0
+    skip = 0
+    total = 0
+    testcase = ""
+    testsuite = ""
     for name,data in agg_data.items():
-        r = t.tr
-        r.td(name[0])
         for test in data:
+            total += 1
             if test.has_key('test'):
-                if test['test']['name'] not in whitelist:
-                    testname=test['test']['name']
-                    if test['test']['result'] != 'passed':
-                        color='red'
+                testcase += '<testcase classname="tests" name="%s.%s">' % (test['test']['stage'],test['test']['name'])
+                if test['test']['result'] != 'passed':
+                    fail += 1
+                    testcase += '<error type="%s"><![CDATA[%s]]></error>' % (test['test']['result'],test['test']['log'])
+            else:
+                testcase += '<testcase classname="stage" name="%s">' % test['stage_name']
+                if test['stage_result'] != 'passed':
+                    if test['stage_result'] == 'skip':
+                        skip += 1
                     else:
-                        color='green'
-                        testname='OK'
-                    r.td(testname,bgcolor=color)
-    print t
+                        error += 1
+                    testcase += '<error type="%s"><![CDATA[%s]]></error>' % (test['stage_result'],test['stage_exception'])
+            testcase += '</testcase>\n'
+    testsuite += '<testsuite name="validation" tests="%d" errors="%d" failures="%d" skip="%d">\n' % (total,error,fail,skip)
+    testcase += '</testsuite>\n'
+    print('<?xml version="1.0" encoding="UTF-8"?>\n%s%s' % (testsuite,testcase))
 
-def main(config, istream,test_whitelist,compare,html):
+def main(config, istream,test_whitelist,compare,xunit):
     logger.debug('starting generation from file %s',istream)
     data = load_yaml(istream)
     comparelist = [str(item) for item in compare[0].split(',')]
@@ -71,7 +81,7 @@ def main(config, istream,test_whitelist,compare,html):
         else:
             area = 'ami'
             aname = 'AMI:'
-        if html:
-            print_failed_html(data,aname,area,whitelist,area2)
+        if xunit:
+            print_xunit(data,aname,area)
         else:
             print_failed(data,aname,area,whitelist,area2)

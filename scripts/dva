@@ -91,11 +91,11 @@ def result(loglevel, conf, istream, ostream, verbose):
 @APP.cmd_arg('-i', '--istream', help='input filename', type=argparse.FileType('r'), default=sys.stdin)
 @APP.cmd_arg('-t', '--test-whitelist', help='comma delimited testname list', default=['*'], nargs='+', metavar='LIST')
 @APP.cmd_arg('-c', '--compare', help='comma delimited list of areas that are compared', default=['ami'], nargs='+', metavar='LIST')
-@APP.cmd_arg('-m', '--html', help='output format will be html', action='store_true')
-def summary(loglevel, conf, istream,test_whitelist,compare,html):
+@APP.cmd_arg('-x', '--xunit', help='output format will be xunit', action='store_true')
+def summary(loglevel, conf, istream,test_whitelist,compare,xunit):
     logging.basicConfig(level=getattr(logging, loglevel))
     from dva.report.summary_main import main
-    return main(conf, istream,test_whitelist,compare,html)
+    return main(conf, istream,test_whitelist,compare,xunit)
 
 @APP.cmd(help='report result as bugzilla')
 @APP.cmd_arg('-i', '--istream', help='input filename', type=argparse.FileType('r'), default=sys.stdin)
