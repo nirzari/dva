@@ -6,13 +6,14 @@
 
 _dva_tab() {
 
-  local dva_cur dva_options dva_sections grep_dva_sections optional_svalidate_args optional_result_args
+  local dva_cur dva_prev dva_options dva_sections grep_dva_sections optional_svalidate_args optional_result_args
 
   COMPREPLY=()
   dva_cur=${COMP_WORDS[COMP_CWORD]}
+  dva_prev=${COMP_WORDS[COMP_CWORD-1]}
   dva_options="-h --help -l --loglevel -c --conf"
-  dva_sections="svalidate validate result bugzilla"
-  grep_dva_sections=$(echo $COMP_LINE | egrep -o "(svalidate|validate|result|bugzilla)" )
+  dva_sections="svalidate validate result summary bugzilla"
+  grep_dva_sections=$(echo $COMP_LINE | egrep -o "(svalidate|validate|result|summary|bugzilla)" )
   optional_svalidate_args="-h --help -i --istream -o --ostream -t --test-whitelist \
                            -T --test-blacklist -s --stage-whitelist -S --stage-blacklist \
                            -g --tags-whitelist -G --tags-blacklist -n --no-action"
@@ -21,6 +22,11 @@ _dva_tab() {
   if [[ $COMP_LINE == *\ -h?* ]] \
     || [[ $COMP_LINE == *--help?* ]]; then
       return
+  fi
+
+  if [[ ${dva_prev} == -l ]] || [[ ${dva_prev} == --loglevel ]]; then
+        COMPREPLY=( $( compgen -W "DEBUG ERROR INFO WARNING debug error info warning" -- "$dva_cur" ) )
+        return
   fi
 
   if [[ -z "${grep_dva_sections}" ]]; then
@@ -33,7 +39,8 @@ _dva_tab() {
     svalidate)
       COMPREPLY=( $( compgen -W "$optional_svalidate_args" -- $dva_cur ) );;
     validate)
-      COMPREPLY=( $( compgen -W "$optional_svalidate_args -P --pool-size" -- $dva_cur ) );;
+      COMPREPLY=( $( compgen -W "$optional_svalidate_args --parallel-instances --parallel-tests \
+                                                          --sorted-mode --test-modules" -- $dva_cur ) );;
     result)
       COMPREPLY=( $( compgen -W "$optional_result_args" -- $dva_cur ) );;
     summary)
@@ -41,10 +48,9 @@ _dva_tab() {
                                  -m --html" -- $dva_cur ) );;
     bugzilla)
       COMPREPLY=( $( compgen -W "$optional_result_args -u --user -p --password -U --url \
-                                                       -C --component -R --product \
+                                                       -d --debug-mode -C --component -R --product \
                                                        -P --pool-size" -- $dva_cur ) );;
   esac
-
 }
 
 complete -F _dva_tab dva
