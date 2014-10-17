@@ -39,32 +39,51 @@ def print_failed(data, aname, area, whitelist,area2='cloudhwname'):
 
 def print_xunit(data, aname, area):
     agg_data = aggregate.flat(data, area)
-    error = 0
-    fail = 0
-    skip = 0
-    total = 0
-    testcase = ""
-    testsuite = ""
+    error = {}
+    fail = {}
+    skip = {}
+    total = {}
+    testcase = {}
+    testsuite = {}
     for name,data in agg_data.items():
         for test in data:
-            total += 1
+            classname = '%s-%s.%s' % (test['product'],test['arch'],name[0])
+            ami = name[0]
+            if not (ami in error): error[ami] = 0
+            if not (ami in fail): fail[ami] = 0
+            if not (ami in total): total[ami] = 0
+            if not (ami in skip): skip[ami] = 0
+            total[ami] = total[ami]+1
             if test.has_key('test'):
-                testcase += '<testcase classname="tests" name="%s.%s">' % (test['test']['stage'],test['test']['name'])
+                try:
+                    testcase[ami] = testcase[ami]+'<testcase classname="%s" name="%s.%s.%s">' % (classname,test['cloudhwname'],test['test']['stage'],test['test']['name'])
+                except KeyError:
+                    testcase[ami] = '<testcase classname="%s" name="%s.%s.%s">' % (classname,test['cloudhwname'],test['test']['stage'],test['test']['name'])
                 if test['test']['result'] != 'passed':
-                    fail += 1
-                    testcase += '<error type="%s"><![CDATA[%s]]></error>' % (test['test']['result'],test['test']['log'])
+                    fail[ami] = fail[ami]+1
+                    testcase[ami] = testcase[ami]+'<error type="%s"><![CDATA[%s]]></error>' % (test['test']['result'],test['test']['log'])
             else:
-                testcase += '<testcase classname="stage" name="%s">' % test['stage_name']
+                try:
+                    testcase[ami] = testcase[ami]+'<testcase classname="%s" name="%s.%s">' % (classname,test['cloudhwname'],test['stage_name'])
+                except KeyError:
+                    testcase[ami] = '<testcase classname="%s" name="%s.%s">' % (classname,test['cloudhwname'],test['stage_name'])
                 if test['stage_result'] != 'passed':
                     if test['stage_result'] == 'skip':
-                        skip += 1
+                        skip[ami] = skip[ami]+1
                     else:
-                        error += 1
-                    testcase += '<error type="%s"><![CDATA[%s]]></error>' % (test['stage_result'],test['stage_exception'])
-            testcase += '</testcase>\n'
-    testsuite += '<testsuite name="validation" tests="%d" errors="%d" failures="%d" skip="%d">\n' % (total,error,fail,skip)
-    testcase += '</testsuite>\n'
-    print('<?xml version="1.0" encoding="UTF-8"?>\n%s%s' % (testsuite,testcase))
+                        error[ami] = error[ami]+1
+                    testcase[ami] = testcase[ami]+'<error type="%s"><![CDATA[%s]]></error>' % (test['stage_result'],test['stage_exception'])
+            testcase[ami] = testcase[ami]+'</testcase>\n'
+        try:
+            testsuite[ami] = testsuite[ami]+'<testsuite name="%s" tests="%d" errors="%d" failures="%d" skip="%d">\n' % (classname,total[ami],error[ami],fail[ami],skip[ami])
+        except KeyError:
+            testsuite[ami] = '<testsuite name="%s" tests="%d" errors="%d" failures="%d" skip="%d">\n' % (classname,total[ami],error[ami],fail[ami],skip[ami])
+        testcase[ami] = testcase[ami]+'</testsuite>'
+    print('<?xml version="1.0" encoding="UTF-8"?><testsuites>')
+    for key in testsuite:
+        print testsuite[key]
+        print testcase[key]
+    print('</testsuites>')
 
 def main(config, istream,test_whitelist,compare,xunit):
     logger.debug('starting generation from file %s',istream)
