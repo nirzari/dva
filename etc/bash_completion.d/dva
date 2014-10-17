@@ -2,14 +2,14 @@
 # bash completion support for validation.
 #
 # The contained completion routines provide support for completing
-# dva subsections, commands and options.
+# dva subsections, commands and options including their constant values and filepaths.
 
 _dva_tab() {
 
-  local dva_cur dva_prev dva_options dva_sections grep_dva_sections optional_svalidate_args optional_result_args
+  local cur dva_prev dva_options dva_sections grep_dva_sections optional_svalidate_args optional_result_args
 
   COMPREPLY=()
-  dva_cur=${COMP_WORDS[COMP_CWORD]}
+  cur=${COMP_WORDS[COMP_CWORD]}
   dva_prev=${COMP_WORDS[COMP_CWORD-1]}
   dva_options="-h --help -l --loglevel -c --conf"
   dva_sections="svalidate validate result summary bugzilla"
@@ -25,31 +25,40 @@ _dva_tab() {
   fi
 
   if [[ ${dva_prev} == -l ]] || [[ ${dva_prev} == --loglevel ]]; then
-        COMPREPLY=( $( compgen -W "DEBUG ERROR INFO WARNING debug error info warning" -- "$dva_cur" ) )
-        return
+      COMPREPLY=( $( compgen -W "DEBUG ERROR INFO WARNING debug error info warning" -- "$cur" ) )
+      return
+  elif [[ ${dva_prev} == -c ]] || [[ ${dva_prev} == --conf ]]; then
+      _filedir
+      return
   fi
 
   if [[ -z "${grep_dva_sections}" ]]; then
-    COMPREPLY=( $( compgen -W "$dva_options $dva_sections" -- "$dva_cur" ) )
+    COMPREPLY=( $( compgen -W "$dva_options $dva_sections" -- "$cur" ) )
+    return
+  fi
+
+  if [[ ${dva_prev} == -i ]] || [[ ${dva_prev} == -o ]] || \
+     [[ ${dva_prev} == --istream ]] || [[ ${dva_prev} == --ostream ]] ; then
+    _filedir
     return
   fi
 
   #$COMP_LINE 2>&1 | egrep -q "^dva: error:" && return
   case "$grep_dva_sections" in
     svalidate)
-      COMPREPLY=( $( compgen -W "$optional_svalidate_args" -- $dva_cur ) );;
+      COMPREPLY=( $( compgen -W "$optional_svalidate_args" -- $cur ) );;
     validate)
       COMPREPLY=( $( compgen -W "$optional_svalidate_args --parallel-instances --parallel-tests \
-                                                          --sorted-mode --test-modules" -- $dva_cur ) );;
+                                                          --sorted-mode --test-modules" -- $cur ) );;
     result)
-      COMPREPLY=( $( compgen -W "$optional_result_args" -- $dva_cur ) );;
+      COMPREPLY=( $( compgen -W "$optional_result_args" -- $cur ) );;
     summary)
       COMPREPLY=( $( compgen -W "-h --help -i --istream -c --compare -t --test-whitelist \
-                                 -m --html" -- $dva_cur ) );;
+                                 -m --html" -- $cur ) );;
     bugzilla)
       COMPREPLY=( $( compgen -W "$optional_result_args -u --user -p --password -U --url \
                                                        -d --debug-mode -C --component -R --product \
-                                                       -P --pool-size" -- $dva_cur ) );;
+                                                       -P --pool-size" -- $cur ) );;
   esac
 }
 
