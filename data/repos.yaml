@@ -206,28 +206,27 @@ ANY_REGION: &ANY_REGION
         rhui-REGION-rhel-server-releases-beta: true
         rhui-REGION-rhel-server-releases-source-beta: false
         rhui-REGION-rhel-server-releases-debug-beta: false
+
     RHEL_7.0:
         rhui-REGION-client-config-server-7: true
-        rhui-REGION-rhel-server-releases: true
-        rhui-REGION-rhel-server-releases-source: false
-        rhui-REGION-rhel-server-releases-debug: false
-        rhui-REGION-rhel-server-releases-optional: true
-        rhui-REGION-rhel-server-releases-optional-source: false
-        rhui-REGION-rhel-server-releases-optional-debug: false
-        rhui-REGION-rhel-server-supplementary: false
-        rhui-REGION-rhel-server-debug-supplementary: false
-        rhui-REGION-rhel-server-source-supplementary: false
-        rhui-REGION-rhel-server-rhscl: true
-        rhui-REGION-rhel-server-debug-rhscl: false
-        rhui-REGION-rhel-server-source-rhscl: false
-        rhui-REGION-rhel-server-rh-common: true
-        rhui-REGION-rhel-server-source-rh-common: false
+        rhui-REGION-rhel-server-debug-extras: false
+        rhui-REGION-rhel-server-debug-optional: false
         rhui-REGION-rhel-server-debug-rh-common: false
-        rhui-REGION-rhel-server-extras-debug: false
-        rhui-REGION-rhel-server-extras-rpms: false
-        rhui-REGION-rhel-server-extras-source-rpms: false
-
-
+        rhui-REGION-rhel-server-debug-rhscl: false
+        rhui-REGION-rhel-server-debug-supplementary: false
+        rhui-REGION-rhel-server-extras: false
+        rhui-REGION-rhel-server-optional: false
+        rhui-REGION-rhel-server-releases: true
+        rhui-REGION-rhel-server-releases-debug: false
+        rhui-REGION-rhel-server-releases-source: false
+        rhui-REGION-rhel-server-rh-common: true
+        rhui-REGION-rhel-server-rhscl: false
+        rhui-REGION-rhel-server-source-extras: false
+        rhui-REGION-rhel-server-source-optional: false
+        rhui-REGION-rhel-server-source-rh-common: false
+        rhui-REGION-rhel-server-source-rhscl: false
+        rhui-REGION-rhel-server-source-supplementary: false
+        rhui-REGION-rhel-server-supplementary: false
 
 # particular regions follow
 ap-northeast-1:
