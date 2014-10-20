@@ -59,6 +59,7 @@ def test_execute(params):
     params = params.copy()
     params['ssh']['user'] = 'root'
     con = get_connection(params)
+    params['test']['start_time'] = time.time()
     # perform the testing
     try:
         test_obj = test_cls()
@@ -76,6 +77,7 @@ def test_execute(params):
         params['test']['result'] = test_result
     finally:
         params['test']['log'] = test_obj.log
+        params['test']['end_time'] = time.time()
     return params
 
 @when_enabled
@@ -132,6 +134,9 @@ def execute_tests(original_params, stage_name, pool_size=TEST_WORKER_POOL_SIZE, 
 def execute_stages(params, pool_size=TEST_WORKER_POOL_SIZE, sorted_mode=False):
     '''perform all stages; sorted_mode, pool_size are propagated to `execute_tests`'''
     params['stage_name'] = 'execute_tests'
+    unixtime = time.time()
+    params['start_time'] = unixtime
+    params['end_time'] = unixtime # end time in this case does not make sense as results are same copies in paralel run
     stages = sorted(params['test_stages'])
     # reboots inbetween stages
     for stage_name in stages[:-1]:

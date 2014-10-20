@@ -48,6 +48,7 @@ def stage(fn):
     def wrapper(params):
         params['stage_name'] = fn.__name__
         params['stage_exception'] = None
+        params['start_time'] = time.time()
         try:
             ret = fn(params)
             params['stage_result'] = RESULT_PASSED
@@ -60,6 +61,8 @@ def stage(fn):
             params['stage_exception'] = traceback.format_exc()
             params['stage_result'] = RESULT_ERROR
             raise StageError('%s: %s' % (fn.__name__, params['stage_exception']))
+        finally:
+            params['end_time'] = time.time()
         # propagate
         params.update(ret)
         return params

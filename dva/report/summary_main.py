@@ -55,10 +55,11 @@ def print_xunit(data, aname, area):
             if not (ami in skip): skip[ami] = 0
             total[ami] = total[ami]+1
             if test.has_key('test'):
+                runtime = round(test['test']['end_time'] - test['test']['start_time'])
                 try:
-                    testcase[ami] = testcase[ami]+'<testcase classname="%s" name="%s.%s.%s">' % (classname,test['cloudhwname'],test['test']['stage'],test['test']['name'])
+                    testcase[ami] = testcase[ami]+'<testcase classname="%s" name="%s.%s.%s" time="%d">' % (classname,test['cloudhwname'],test['test']['stage'],test['test']['name'],runtime)
                 except KeyError:
-                    testcase[ami] = '<testcase classname="%s" name="%s.%s.%s">' % (classname,test['cloudhwname'],test['test']['stage'],test['test']['name'])
+                    testcase[ami] = '<testcase classname="%s" name="%s.%s.%s" time="%d">' % (classname,test['cloudhwname'],test['test']['stage'],test['test']['name'],runtime)
                 if test['test']['result'] != 'passed':
                     fail[ami] = fail[ami]+1
                     testcase[ami] = testcase[ami]+'<error type="%s"><![CDATA[%s]]></error>' % (test['test']['result'],test['test']['log'])
