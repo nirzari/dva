@@ -35,10 +35,30 @@
   cloudhwname: hs1.8xlarge
   memory: '119000000'
   virtualization: hvm
-- {arch: 'x86_64', cpu: '4', memory: '14000000', cloudhwname: m3.xlarge, virtualization: 'hvm', userdata: *USERDATA}
-- {arch: 'x86_64', cpu: '8', memory: '29700000', cloudhwname: m3.2xlarge, virtualization: 'hvm', userdata: *USERDATA}
-- {arch: 'x86_64', cpu: '16', memory: '21600000', cloudhwname: cc1.4xlarge, virtualization: 'hvm', userdata: *USERDATA}
-- {arch: 'x86_64', cpu: '32', memory: '60500000', cloudhwname: cc2.8xlarge, virtualization: 'hvm', userdata: *USERDATA}
-- {arch: 'x86_64', cpu: '16', memory: '20890000', cloudhwname: cg1.4xlarge, virtualization: 'hvm', userdata: *USERDATA}
-- {arch: 'x86_64', cpu: '16', memory: '60500000', cloudhwname: hi1.4xlarge, virtualization: 'hvm', userdata: *USERDATA}
-- {arch: 'x86_64', cpu: '32', memory: '244000000', cloudhwname: cr1.8xlarge, virtualization: 'hvm', userdata: *USERDATA}
+- {arch: x86_64, cpu: '1', memory: '900000', cloudhwname: t2.micro, virtualization: hvm, userdata: *USERDATA}
+- {arch: x86_64, cpu: '1', memory: '1300000', cloudhwname: t2.small, virtualization: hvm, userdata: *USERDATA}
+- {arch: x86_64, cpu: '2', memory: '3600000', cloudhwname: t2.medium, virtualization: hvm, userdata: *USERDATA}
+- arch: 'x86_64'
+  cpu: '4'
+  memory: '14000000'
+  cloudhwname: m3.xlarge
+  virtualization: 'hvm'
+  userdata: *USERDATA
+  bmap: &BMAP_A
+  - {delete_on_termination: true, name: /dev/sda1, size: '15'}
+  - {ephemeral_name: ephemeral0, name: /dev/sdf}
+- {arch: 'x86_64', cpu: '8', memory: '29700000', cloudhwname: m3.2xlarge, virtualization: 'hvm', userdata: *USERDATA, bmap: *BMAP_A}
+- {arch: 'x86_64', cpu: '16', memory: '21600000', cloudhwname: cc1.4xlarge, virtualization: 'hvm', userdata: *USERDATA, bmap: *BMAP_A}
+- {arch: 'x86_64', cpu: '32', memory: '60500000', cloudhwname: cc2.8xlarge, virtualization: 'hvm', userdata: *USERDATA, bmap: *BMAP_A}
+- {arch: 'x86_64', cpu: '16', memory: '20890000', cloudhwname: cg1.4xlarge, virtualization: 'hvm', userdata: *USERDATA, bmap: *BMAP_A}
+- {arch: 'x86_64', cpu: '16', memory: '60500000', cloudhwname: hi1.4xlarge, virtualization: 'hvm', userdata: *USERDATA, bmap: *BMAP_A}
+- {arch: 'x86_64', cpu: '32', memory: '244000000', cloudhwname: cr1.8xlarge, virtualization: 'hvm', userdata: *USERDATA, bmap: *BMAP_A}
+- {arch: x86_64, cpu: '2', memory: '15000000', cloudhwname: r3.large, virtualization: hvm, userdata: *USERDATA, bmap: *BMAP_A}
+- {arch: x86_64, cpu: '4', memory: '30000000', cloudhwname: r3.xlarge, virtualization: hvm, userdata: *USERDATA, bmap: *BMAP_A}
+- {arch: x86_64, cpu: '8', memory: '60000000', cloudhwname: r3.2xlarge, virtualization: hvm, userdata: *USERDATA, bmap: *BMAP_A}
+- {arch: x86_64, cpu: '16', memory: '120000000', cloudhwname: r3.4xlarge, virtualization: hvm, userdata: *USERDATA, bmap: *BMAP_A}
+- {arch: x86_64, cpu: '32', memory: '240000000', cloudhwname: r3.8xlarge, virtualization: hvm, userdata: *USERDATA, bmap: *BMAP_A}
+- {arch: x86_64, cpu: '4', memory: '30000000', cloudhwname: i2.xlarge, virtualization: hvm, userdata: *USERDATA, bmap: *BMAP_A}
+- {arch: x86_64, cpu: '8', memory: '60000000', cloudhwname: i2.2xlarge, virtualization: hvm, userdata: *USERDATA, bmap: *BMAP_A}
+- {arch: x86_64, cpu: '16', memory: '120000000', cloudhwname: i2.4xlarge, virtualization: hvm, userdata: *USERDATA, bmap: *BMAP_A}
+- {arch: x86_64, cpu: '32', memory: '240000000', cloudhwname: i2.8xlarge, virtualization: hvm, userdata: *USERDATA, bmap: *BMAP_A}
