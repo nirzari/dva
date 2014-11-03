@@ -219,6 +219,7 @@ def terminate_instance(params):
         logger.debug('not dropping any connection to %s; not in cache', brief(params))
     driver = cloud.get_driver(params['cloud'], logger, CLOUD_DRIVER_MAXWAIT)
     logger.debug('trying to terminate %s', hostname)
+    params['console'] = driver.get_console_output(params)
     driver.terminate(params)
     logger.info('terminated %s', hostname)
     return params

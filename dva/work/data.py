@@ -11,9 +11,9 @@ from functools import wraps
 from yaml import load as yload
 from yaml import dump_all as ysafe_dump_all
 try:
-    from yaml import CLoader as Loader, CDumper as Dumper
+    from yaml import CSafeLoader as Loader, CSafeDumper as Dumper
 except ImportError:
-    from yaml import Loader, Dumper
+    from yaml import SafeLoader as Loader, SafeDumper as Dumper
 
 
 logger = logging.getLogger(__name__)
