@@ -30,6 +30,9 @@ DEFAULT_FIELDS = {
 EPHEMERAL_FIELDS = ['credentials', 'global_setup_script', 'instance', 'ssh', 'test_stages', 'user_data',
         'bmap', 'enabled', 'userdata', 'test_whitelist', 'test_blacklist', 'stage_whitelist', 'stage_blacklist',
         'tags_whitelist', 'tags_blacklist']
+
+GLOBAL_CONFIG_FIELDS = ['global_setup_script']
+
 RE_ALL = re.compile('.*')
 
 class DataError(Exception):
@@ -71,20 +74,22 @@ def record_cloud_config(record, config_file=None):
     '''put cloud config data into a record; first found config file is used'''
     config_file = set_config_filename(config_file)
     # e.g. record['cloud'] == 'ec2' -> config['cloud_access']['ec2']
+    global_config = cloud_config = {}
     try:
         region = record['region']
         cloud = record['cloud']
     except KeyError as err:
         raise DataError('record %r misses %s' % (record, err))
     try:
-        config = load_yaml(config_file)['cloud_access'][cloud]
+        global_config = load_yaml(config_file)
+        cloud_config = global_config['cloud_access'][cloud]
         # provide cloud credentials
         record['credentials'] = {
-            'ec2_access_key': config['ec2_access_key'],
-            'ec2_secret_key': config['ec2_secret_key']
+            'ec2_access_key': cloud_config['ec2_access_key'],
+            'ec2_secret_key': cloud_config['ec2_secret_key']
         }
         # provide ssh config
-        ssh_config = config['ssh'][region]
+        ssh_config = cloud_config['ssh'][region]
         record['ssh'] = {
             'keypair': ssh_config[0],
             'keyfile': ssh_config[1]
@@ -95,6 +100,13 @@ def record_cloud_config(record, config_file=None):
         raise ConfigError('config %s:ssh.%s misses an item (%s)' % (config_file, region, err))
     except Exception as err:
         raise ConfigError('config %s: %s' % (config_file, err))
+
+    # propagate global config fileds
+    for key in GLOBAL_CONFIG_FIELDS:
+        try:
+            record[key] = global_config[key]
+        except KeyError:
+            pass
     return record
 
 

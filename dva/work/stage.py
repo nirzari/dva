@@ -183,7 +183,7 @@ def global_setup_script(params):
         return params
 
     script = os.path.expandvars(os.path.expanduser(script))
-    remote_script = '/tmp/' + basename(script)
+    remote_script = '/tmp/' + os.path.basename(script)
 
     script_timeout = params.get('global_setup_script_timeout', DEFAULT_GLOBAL_SETUP_SCRIPT_TIMEOUT)
 
