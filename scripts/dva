@@ -99,10 +99,14 @@ def summary(loglevel, conf, istream,test_whitelist,compare,xunit):
 
 @APP.cmd(help='jenkins upload tool')
 @APP.cmd_arg('-i', '--istream', help='input filename', type=argparse.FileType('r'), default=sys.stdin)
-def jenkins(loglevel, conf, istream):
+@APP.cmd_arg('-u', '--user', help='jenkins username', default="jenkins")
+@APP.cmd_arg('-p', '--password', help='jenkins password', default="jenkins")
+@APP.cmd_arg('-U', '--url', help='jenkins URL', default=None)
+@APP.cmd_arg('-c', '--comment', help='job comment', default=None)
+def jenkins(loglevel, conf, istream, url, comment, login, password):
     logging.basicConfig(level=getattr(logging, loglevel))
     from dva.report.jenkins import main
-    return main(conf, istream)
+    return main(conf, istream, url, hashtag, comment, login, password)
 
 
 @APP.cmd(help='report result as bugzilla')
