@@ -97,6 +97,14 @@ def summary(loglevel, conf, istream,test_whitelist,compare,xunit):
     from dva.report.summary_main import main
     return main(conf, istream,test_whitelist,compare,xunit)
 
+@APP.cmd(help='jenkins upload tool')
+@APP.cmd_arg('-i', '--istream', help='input filename', type=argparse.FileType('r'), default=sys.stdin)
+def jenkins(loglevel, conf, istream):
+    logging.basicConfig(level=getattr(logging, loglevel))
+    from dva.report.jenkins import main
+    return main(conf, istream)
+
+
 @APP.cmd(help='report result as bugzilla')
 @APP.cmd_arg('-i', '--istream', help='input filename', type=argparse.FileType('r'), default=sys.stdin)
 @APP.cmd_arg('-o', '--ostream', help='output filename', type=argparse.FileType('w'), default=sys.stdout)
