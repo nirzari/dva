@@ -11,4 +11,4 @@
       yum -y install xdelta
       touch /userdata_test
       date >> /userdata_test
-- {arch: x86_64, cpu: '1', memory: '34200000', cloudhwname: m3.medium, virtualization: paravirtual, userdata: *USERDATA, bmap: *BMAP}
+- {arch: x86_64, cpu: '1', memory: '3420000', cloudhwname: m3.medium, virtualization: paravirtual, userdata: *USERDATA, bmap: *BMAP}
