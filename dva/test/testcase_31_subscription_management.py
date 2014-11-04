@@ -1,5 +1,6 @@
 """ This module contains testcase_31_subscription_management test """
 from testcase import Testcase
+from distutils.version import LooseVersion
 
 class testcase_31_subscription_management(Testcase):
     """
@@ -12,6 +13,15 @@ class testcase_31_subscription_management(Testcase):
 
     def test(self, connection, params):
         """ Perform test """
+        version = LooseVersion(params['version'])
+        # following versions shouldn't contain subscription-manager at all
+        if version < '5.9' or '6.0' >= version < '6.3':
+            self.ping_pong(
+                connection,
+                'rpm -q subscrioption-manager || echo SUCCESS',
+                expectation='\r\nSUCCESS\r\n',
+            )
+            return self.log
 
         # check subscription-manager plugin is disabled
         self.ping_pong(
