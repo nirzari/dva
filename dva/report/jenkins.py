@@ -16,9 +16,9 @@ from ..work.common import RESULT_PASSED
 
 logger = logging.getLogger(__name__)
 
-def main(config, istream, job, hashtag, desc, login="jenkins", passwd="jenkins"):
-    with open(istream, "rb") as f:
-        file_data = f.read()
+def main(config, f, job, hashtag, desc, login="jenkins", passwd="jenkins"):
+#    with open(istream, "rb") as f:
+    file_data = f.read()
     params = {"parameter": [{'name':'report.xml', 'file': 'file0'},{"name": "desc", "value": hashtag}]}
     data, content_type = urllib3.encode_multipart_formdata([
         ("file0", (f.name, file_data)),
@@ -42,5 +42,4 @@ def main(config, istream, job, hashtag, desc, login="jenkins", passwd="jenkins")
     params = {'description': desc}
     r = requests.get(url, auth=(login,passwd), params=params)
 
-    print r.text
-    print r.status_code
+    print "Return code: " + str(r.status_code)

@@ -5,6 +5,7 @@ import logging
 import argparse
 import aaargh
 import re
+import uuid
 
 from dva.tools import catching
 # load all testing modules
@@ -99,14 +100,15 @@ def summary(loglevel, conf, istream,test_whitelist,compare,xunit):
 
 @APP.cmd(help='jenkins upload tool')
 @APP.cmd_arg('-i', '--istream', help='input filename', type=argparse.FileType('r'), default=sys.stdin)
-@APP.cmd_arg('-u', '--user', help='jenkins username', default="jenkins")
-@APP.cmd_arg('-p', '--password', help='jenkins password', default="jenkins")
-@APP.cmd_arg('-U', '--url', help='jenkins URL', default=None)
-@APP.cmd_arg('-c', '--comment', help='job comment', default=None)
-def jenkins(loglevel, conf, istream, url, comment, login, password):
+@APP.cmd_arg('-u', '--user', help='Jenkins username', default="jenkins")
+@APP.cmd_arg('-p', '--password', help='Jenkins password', default="jenkins")
+@APP.cmd_arg('-U', '--url', help='Jenkins URL', default=None)
+@APP.cmd_arg('-c', '--comment', help='job comment', default="No comment")
+def jenkins(loglevel, conf, istream, url, comment, user, password):
     logging.basicConfig(level=getattr(logging, loglevel))
     from dva.report.jenkins import main
-    return main(conf, istream, url, hashtag, comment, login, password)
+    hashtag = str(uuid.uuid4())
+    return main(conf, istream, url, hashtag, comment, user, password)
 
 
 @APP.cmd(help='report result as bugzilla')
