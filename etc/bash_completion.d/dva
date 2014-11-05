@@ -54,7 +54,10 @@ _dva_tab() {
       COMPREPLY=( $( compgen -W "$optional_result_args" -- $cur ) );;
     summary)
       COMPREPLY=( $( compgen -W "-h --help -i --istream -c --compare -t --test-whitelist \
-                                 -m --html" -- $cur ) );;
+                                 -x --xunit" -- $cur ) );;
+    jenkins)
+      COMPREPLY=( $( compgen -W "-h --help -i --istream -u --user -p --password -U --url \
+                                 -c --comment" -- $cur ) );;
     bugzilla)
       COMPREPLY=( $( compgen -W "$optional_result_args -u --user -p --password -U --url \
                                                        -d --debug-mode -C --component -R --product \
