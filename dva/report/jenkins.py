@@ -16,17 +16,19 @@ from ..work.common import RESULT_PASSED
 
 logger = logging.getLogger(__name__)
 
-def main(config, f, job, hashtag, desc, login="jenkins", passwd="jenkins"):
-#    with open(istream, "rb") as f:
-    file_data = f.read()
+def main(config, istream, job, hashtag, desc, login, passwd):
+    file_data = istream.read()
     params = {"parameter": [{'name':'report.xml', 'file': 'file0'},{"name": "desc", "value": hashtag}]}
     data, content_type = urllib3.encode_multipart_formdata([
-        ("file0", (f.name, file_data)),
+        ("file0", (istream.name, file_data)),
         ("json", json.dumps(params)),
         ("Submit", "Build"),
         ])
     url = job + 'build'
     r = requests.post(url, auth=(login, passwd), data=data, headers={"content-type": content_type})
+    if not r.ok:
+        print "Authentification failure."
+        exit(1)
     print "Waiting 10s for build to be finished."
     time.sleep(10)
     url = job + 'api/xml'
