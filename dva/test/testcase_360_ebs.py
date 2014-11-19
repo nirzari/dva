@@ -15,7 +15,7 @@ class testcase_360_ebs(Testcase):
     """
     stages = ['stage1']
     tags = ['default', 'kernel']
-    applicable = {"product": "(?i)RHEL|BETA", 'cloud': 'ec2', 'version': 'OS (>=5.5, !=6.0)'}
+    applicable = {"product": "(?i)RHEL|BETA|ATOMIC", 'cloud': 'ec2', 'version': 'OS (>=5.5, !=6.0)'}
 
     def test(self, connection, params):
         """ Perform test """

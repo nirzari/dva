@@ -23,7 +23,7 @@ CLOUD_CREATE_WAIT=10
 CREATE_ATTEMPTS=360
 SETUP_ATTEMPTS = 30
 SETUP_SETTLEWAIT = 30
-SSH_USERS = ['root', 'ec2-user', 'fedora']
+SSH_USERS = ['root', 'ec2-user', 'fedora', 'cloud-user']
 DEFAULT_GLOBAL_SETUP_SCRIPT_TIMEOUT = 120
 OLD_BASH_HISTORY_FILE = '~/DVA_OLD_BASH_HISTORY'
 
@@ -142,10 +142,13 @@ def allow_root_login(params):
         return params
 
     from textwrap import dedent
+    # FIXME: copying the skel items explicitly so paramiko minds the prompt
+    # rhel/fedora atomic issue: http://ask.projectatomic.io/en/question/141/root-home-missing-usual-skel-items/
     command = dedent(r'''
         sudo cp -af /home/%s/.ssh/authorized_keys /root/.ssh/authorized_keys && \
         sudo chown root.root /root/.ssh/authorized_keys && \
         sudo restorecon -Rv /root/.ssh && \
+        sudo cp -f /etc/skel/.bash* ~root/ && \
         echo SUCCESS
     ''' % user)
 

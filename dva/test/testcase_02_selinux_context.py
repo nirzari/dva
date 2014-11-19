@@ -4,7 +4,16 @@ import yaml
 import os
 import tempfile
 from testcase import Testcase
+from collections import defaultdict
 
+EXCLUDED_PATHS = defaultdict(lambda: ['/mnt', '/proc', '/sys'], {
+    'ATOMIC': [ '/var/mnt', '/proc', '/sys', '/sysroot/' ]
+})
+
+def restorecon_cmd(product):
+    '''return a restorecon cmd  to execute remotely to get list of changes'''
+    return 'restorecon -R -v -n ' +  ' '.join(map(lambda path: '-e ' + path, EXCLUDED_PATHS[product])) + \
+        ''' | sed -e 's, context , ,' -e 's,^restorecon reset ,,' '''
 
 class testcase_02_selinux_context(Testcase):
     """
@@ -19,8 +28,8 @@ class testcase_02_selinux_context(Testcase):
         prod = params['product'].upper()
         ver = params['version']
         #get the restorecon output file
-        # pylint: disable=C0301
-        self.ping_pong(connection, "restorecon -R -v -n -e /proc -e /sys -e /mnt / | sed -e 's, context , ,' -e 's,^restorecon reset ,,' | cat > /tmp/restorecon_output.txt && echo SUCCESS", "\r\nSUCCESS\r\n", 260)
+        self.ping_pong(connection, restorecon_cmd(prod) + " > /tmp/restorecon_output.txt && echo SUCCESS",
+                       "\r\nSUCCESS\r\n", 260)
         tfile = tempfile.NamedTemporaryFile(delete=False)
         tfile.close()
         connection.sftp.get('/tmp/restorecon_output.txt', tfile.name)
@@ -40,14 +49,8 @@ class testcase_02_selinux_context(Testcase):
             restorecon_dict[filename] = [source_context, destination_context]
         #figure out if there are new/lost entries or the restorecon output matched the list of allowed exclusions
         with open(self.datadir + '/selinux_context.yaml') as selinux_context:
-            context_exclusions_ = yaml.load(selinux_context)
-        try:
-            context_exclusions = context_exclusions_['%s_%s' % (prod, ver)]
-        except KeyError:
-            self.log.append({
-                'result': 'skip',
-                'comment': 'unsupported product-version combination'})
-            return self.log
+            # by default, no SELinux issues are expected for untracked product/version combinations
+            context_exclusions = defaultdict(lambda: {}, yaml.load(selinux_context))['%s_%s' % (prod, ver)]
 
         lost_entries = []
         for filename in context_exclusions:

@@ -8,7 +8,7 @@ class testcase_41_rh_amazon_rhui_client(Testcase):
     """
     tags = ['default']
     stages = ['stage1']
-    not_applicable = {'product': '(?i)FEDORA'}
+    not_applicable = {'product': '(?i)FEDORA|ATOMIC'}
 
     def test(self, connection, params):
         """ Perform test """

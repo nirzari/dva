@@ -11,6 +11,7 @@ class testcase_61_yum_proxy(Testcase):
     stages = ['stage1']
     after = ['testcase_60_yum_update']
     tags = ['default', 'content']
+    not_applicable = {'product': '(?i)atomic'}
 
     def test(self, connection, params):
         """ Perform test """

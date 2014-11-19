@@ -8,7 +8,7 @@ class testcase_62_cpuflags(Testcase):
     """
     stages = ['stage1', 'stage2']
     tags = ['default', 'kernel']
-    applicable = {'virtualization': 'hvm', 'product': 'BETA|RHEL', 'version': 'OS (>=6.6)'}
+    applicable = {'virtualization': 'hvm', 'product': '(?i)BETA|RHEL|ATOMIC', 'version': 'OS (>=6.6)'}
 
     # pylint: disable=unused-argument
     def test(self, connection, params):
