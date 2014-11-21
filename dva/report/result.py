@@ -88,9 +88,12 @@ def get_overall_result(data, verbose=False):
     Get human-readable representation of the result; partitioned by ami
     returns a tuple of an overal result and list of tuples overal_result, [(ami_resutl, ami_log), ...]
     """
-    agg_data = aggregate.nested(data, 'region', 'arch', 'itype', 'ami', 'cloudhwname')
     ret = RESULT_PASSED
     log = []
+    if not data:
+        return ret, log
+
+    agg_data = aggregate.nested(data, 'region', 'arch', 'itype', 'ami', 'cloudhwname')
     for region in agg_data:
         for arch in agg_data[region]:
             for itype in agg_data[region][arch]:

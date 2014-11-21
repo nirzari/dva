@@ -165,6 +165,10 @@ def load(path, config_file=None, augment={}, shuffle=True):
     '''
 
     data = load_yaml(path)
+    if data is None:
+        # no items to process
+        return []
+
     assert type(data) is list, 'invalid data type: %s' % type(data)
     ret = []
     for record in data:

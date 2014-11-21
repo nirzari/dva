@@ -9,6 +9,7 @@ import json
 import requests
 import time
 import urllib3
+import StringIO
 import xml.etree.ElementTree as ET
 from ..tools.retrying import retrying, EAgain
 from ..work.data import load_yaml, save_result
@@ -16,8 +17,14 @@ from ..work.common import RESULT_PASSED
 
 logger = logging.getLogger(__name__)
 
-def main(config, istream, job, hashtag, desc, login, passwd):
+def main(config, istream, job, hashtag, desc, login, passwd, report_empty=False):
     file_data = istream.read()
+    # check the data
+    report_tree = ET.parse(StringIO.StringIO(file_data))
+    if not report_tree.getroot().getchildren() and not report_empty:
+        # nothing to report and user not interested in reporting empty result
+        print "nothing to report..."
+        return
     params = {"parameter": [{'name':'report.xml', 'file': 'file0'},{"name": "desc", "value": hashtag}]}
     data, content_type = urllib3.encode_multipart_formdata([
         ("file0", (istream.name, file_data)),

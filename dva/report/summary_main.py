@@ -23,6 +23,8 @@ except ImportError:
 logger = logging.getLogger(__name__)
 
 def print_failed(data, aname, area, whitelist,area2='cloudhwname'):
+    if not data:
+        return
     agg_data = aggregate.flat(data, area)
     for name,data in agg_data.items():
         print('%s %s' % (aname, name[0]))
@@ -38,6 +40,10 @@ def print_failed(data, aname, area, whitelist,area2='cloudhwname'):
                     print('!! Failed stage %s (%s)' % (test['stage_name'],test[area2]))
 
 def print_xunit(data, aname, area):
+    print('<?xml version="1.0" encoding="UTF-8"?><testsuites>')
+    if not data:
+        print('</testsuites>')
+        return
     agg_data = aggregate.flat(data, area)
     error = {}
     fail = {}
@@ -80,7 +86,7 @@ def print_xunit(data, aname, area):
         except KeyError:
             testsuite[ami] = '<testsuite name="%s" tests="%d" errors="%d" failures="%d" skip="%d">\n' % (classname,total[ami],error[ami],fail[ami],skip[ami])
         testcase[ami] = testcase[ami]+'</testsuite>'
-    print('<?xml version="1.0" encoding="UTF-8"?><testsuites>')
+
     for key in testsuite:
         print testsuite[key]
         print testcase[key]

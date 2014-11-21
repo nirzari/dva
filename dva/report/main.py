@@ -14,5 +14,7 @@ def main(config, istream, ostream, verbose):
     for ami_result, ami_log in ami_results:
         for log_line in ami_log:
             print >>ostream, log_line
-    return result == RESULT_PASSED and 0 or 1
+    # result passed -> 0 otherwise 1;
+    # please note: result == passed and 0 or 1 -> 1 always
+    return result != RESULT_PASSED and 1 or 0
 
