@@ -104,11 +104,12 @@ def summary(loglevel, conf, istream,test_whitelist,compare,xunit):
 @APP.cmd_arg('-p', '--password', help='Jenkins password', default="jenkins")
 @APP.cmd_arg('-U', '--url', help='Jenkins URL', default=None)
 @APP.cmd_arg('-c', '--comment', help='job comment', default="No comment")
-def jenkins(loglevel, conf, istream, url, comment, user, password):
+@APP.cmd_arg('--report-empty', help='report even though no results detected', action='store_true')
+def jenkins(loglevel, conf, istream, url, comment, user, password, report_empty):
     logging.basicConfig(level=getattr(logging, loglevel))
     from dva.report.jenkins import main
     hashtag = str(uuid.uuid4())
-    return main(conf, istream, url, hashtag, comment, user, password)
+    return main(conf, istream, url, hashtag, comment, user, password, report_empty)
 
 
 @APP.cmd(help='report result as bugzilla')
