@@ -44,7 +44,7 @@ class testcase_21_disk_size_format(Testcase):
 
         disks = self.get_result(connection, 'mount | grep \'^/dev\' | awk \'{print $1}\'')
         if disks:
-            for disk in disks.split():
+            for disk in set(disks.split()):
                 # check free space
                 self.get_return_value(connection, '[ `df -k %s | awk \'{ print $2 }\' | tail -n 1` -gt 3937219 ]' % disk)
                 # check mount point fstype
