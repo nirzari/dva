@@ -159,6 +159,16 @@ def normalize_record(record):
     # to prevent any missing fields
     return dict(DEFAULT_FIELDS.items() + record.items())
 
+
+def expand_record(record, config_file, augment={}):
+    '''
+    expand single validation record record according to configuration data
+    return: list of action items for a single record
+    '''
+    record.update(augment)
+    return [expand_record_tests(record) for record in expand_record_arch( \
+                    record_cloud_config(normalize_record(record), config_file))]
+
 def load(path, config_file=None, augment={}, shuffle=True):
     '''load data and process it; returns list of expanded records
        all **kvs are propagated to the data
@@ -172,9 +182,7 @@ def load(path, config_file=None, augment={}, shuffle=True):
     assert type(data) is list, 'invalid data type: %s' % type(data)
     ret = []
     for record in data:
-        record.update(augment)
-        ret.extend([expand_record_tests(record) for record in expand_record_arch( \
-                        record_cloud_config(normalize_record(record), config_file))])
+        ret.extend(expand_record(record, config_file, augment))
     # shuffle to avoid single region exhaustion
     if shuffle:
         random.shuffle(ret)
