@@ -24,7 +24,8 @@ DEFAULT_FIELDS = {
     'cloud': 'ec2',
     'enabled': True,
     'bmap': {},
-    'userdata': ''
+    'userdata': '',
+    'keepalive': False
 }
 
 EPHEMERAL_FIELDS = ['credentials', 'global_setup_script', 'instance', 'ssh', 'test_stages', 'user_data',

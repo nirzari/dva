@@ -28,13 +28,13 @@ def target(ostream, params, parallel_tests, sorted_mode):
 
 
 def main(conf, istream, ostream, test_whitelist, test_blacklist, stage_whitelist, stage_blacklist,
-            tags_whitelist, tags_blacklist, no_action, parallel_instances, parallel_tests, sorted_mode):
+            tags_whitelist, tags_blacklist, no_action, parallel_instances, parallel_tests, sorted_mode, keepalive):
     ''' main parallel-data worker function'''
     global TOTAL
     params = dict(test_whitelist=test_whitelist, test_blacklist=test_blacklist,
                     stage_whitelist=stage_whitelist, stage_blacklist=stage_blacklist,
                     tags_whitelist=tags_whitelist, tags_blacklist=tags_blacklist,
-                   enabled=not no_action)
+                   enabled=not no_action, keepalive=keepalive)
     params = load(istream, config_file=conf, augment=params)
     TOTAL = required_actions_count(params)
     print_progress_info(PROCESSED, TOTAL)

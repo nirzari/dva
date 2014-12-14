@@ -215,7 +215,7 @@ def terminate_instance(params):
     hostname = params['hostname']
     if 'keepalive' in params and params['keepalive']:
         logger.info('will not terminate %s (keepalive requested)', hostname)
-        return
+        return params
     try:
         drop_connection(params)
     except ConnectionCacheError as err:

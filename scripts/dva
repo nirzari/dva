@@ -67,8 +67,9 @@ def svalidate(loglevel, conf, istream, ostream, test_whitelist, test_blacklist, 
 @APP.cmd_arg('--parallel-tests', help='greenlet pool size', default=4, type=int)
 @APP.cmd_arg('--sorted-mode', help='apply both dependency- and name-based sorting to test execution', action='store_true')
 @APP.cmd_arg('--test-modules', help='use custom test modules', default=['dva.test'], metavar='MOD.NAME', nargs='+')
+@APP.cmd_arg('--keepalive', help='do not terminate instances after validation', action='store_true')
 def validate(loglevel, conf, istream, ostream, test_whitelist, test_blacklist, stage_whitelist, stage_blacklist,
-    tags_whitelist, tags_blacklist, no_action, parallel_instances, parallel_tests, sorted_mode, test_modules):
+    tags_whitelist, tags_blacklist, no_action, parallel_instances, parallel_tests, sorted_mode, test_modules, keepalive):
     logging.basicConfig(level=getattr(logging, loglevel))
     import importlib
     # preload test cases
@@ -76,7 +77,7 @@ def validate(loglevel, conf, istream, ostream, test_whitelist, test_blacklist, s
     logging.debug('using test modules: %s', modules)
     from dva.work.data_parallel_main import main
     return main(conf, istream, ostream, test_whitelist, test_blacklist, stage_whitelist, stage_blacklist,
-                tags_whitelist, tags_blacklist, no_action, parallel_instances, parallel_tests, sorted_mode)
+                tags_whitelist, tags_blacklist, no_action, parallel_instances, parallel_tests, sorted_mode, keepalive)
 
 
 @APP.cmd(help='report result')
