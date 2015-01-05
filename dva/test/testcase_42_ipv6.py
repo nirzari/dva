@@ -14,7 +14,7 @@ class testcase_42_ipv6(Testcase):
         """ Perform test """
 
         prod = params['product'].upper()
-        if prod in ['RHEL', 'BETA']:
+        if prod in ['RHEL', 'RHEL6', 'BETA']:
             self.get_return_value(connection, 'grep NETWORKING_IPV6=no /etc/sysconfig/network')
         else:
             self.get_return_value(connection, 'grep NETWORKING_IPV6=yes /etc/sysconfig/network')
