@@ -54,6 +54,9 @@ def load_yaml(filename):
 
 def arch_to_path(arch):
     '''return path to first arch if found in HWP_PATHS; raise otherwise'''
+    if os.path.exists(arch):
+        # use direct custom hwp path from data file instead of an alias
+        return arch
     filename = lambda dirname: os.path.join(dirname, str(arch) + '.yaml')
     arch_files = [filename(dirname) for dirname in HWP_PATHS if os.path.exists(filename(dirname))]
     assert arch_files, 'wrong arch: %s.yaml not found in any of %s' % (arch, HWP_PATHS)
@@ -115,9 +118,17 @@ def expand_record_arch(record):
     '''return a list of arch-expanded records'''
     assert type(record) is dict
     try:
-        arch_data = load_yaml(arch_to_path(record['arch']))
+        arch = record['arch']
     except KeyError as err:
         raise DataError('record %r: %s' % (record, err))
+    if isinstance(arch, basestring):
+        # possibly a path or an HWP alias
+        arch_data = load_yaml(arch_to_path(arch))
+    elif isinstance(arch, list):
+        # possibly embedded data
+        arch_data = arch
+    else:
+        raise DataError('record %r: wrong arch type: %s (should be list of dicts)' % (record, type(arch)))
     return [dict(record.items() + arch_item.items()) for arch_item in arch_data]
 
 def expand_record_tests(record):
