@@ -143,7 +143,8 @@ class EC2(AbstractCloud):
 
     def _get_connection(self, params):
         ec2_access_key, ec2_secret_key = params['credentials']['ec2_access_key'], params['credentials']['ec2_secret_key']
-        reg = boto.ec2.get_region(params['region'], aws_access_key_id=ec2_access_key, aws_secret_access_key=ec2_secret_key)
+        endpoint = params.get('region_endpoint', None)
+        reg = boto.ec2.get_region(params['region'], aws_access_key_id=ec2_access_key, aws_secret_access_key=ec2_secret_key, endpoint=endpoint)
         connection = reg.connect(aws_access_key_id=ec2_access_key, aws_secret_access_key=ec2_secret_key)
         return connection
 
