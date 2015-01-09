@@ -8,6 +8,7 @@ from boto.ec2.blockdevicemapping import BlockDeviceType
 from boto.ec2.blockdevicemapping import BlockDeviceMapping
 
 from base import *
+from contextlib import contextmanager
 
 class EC2(AbstractCloud):
     """
@@ -34,15 +35,54 @@ class EC2(AbstractCloud):
         except Exception, err:
             raise PermanentCloudException('Error while setting up required cloud params: %s' % err)
 
+
+    def get_connection(self, params):
+        '''get cloud connection'''
+        try:
+            return self._get_connection(params)
+        except boto.exception.EC2ResponseError, err:
+            # Boto errors should be handled according to their error Message - there are some well-known ones
+            self.logger.debug('got boto error during instance creation: %s' % err)
+            if str(err).find('<Code>InvalidParameterValue</Code>') != -1:
+                # InvalidParameterValue is really bad
+                raise PermanentCloudException('got error connecting to ec2: %s' % err)
+            else:
+                raise
+        except socket.error, err:
+            # Unexpected error happened
+            raise TemporaryCloudException('Socket error connecting to EC2: ' + traceback.format_exc())
+
+    @contextmanager
+    def connection(self, params):
+        connection = self.get_connection(params)
+        try:
+            yield connection
+        finally:
+            connection.close()
+
+    def get_image(self, params):
+        '''get cloud image'''
+        try:
+            with self.connection(params) as connection:
+                image = connection.get_image(params['ami'])
+            return image
+        except boto.exception.EC2ResponseError, err:
+            # Boto errors should be handled according to their error Message - there are some well-known ones
+            self.logger.debug('got boto error during instance creation: %s' % err)
+            if str(err).find('<Code>InvalidAMIID.NotFound</Code>') != -1:
+                # No such AMI in the region
+                raise PermanentCloudException('AMI %s not found in %s' % (params['ami'], params['region']))
+            else:
+                raise
+
     def create(self, params):
         try:
             ssh_key_name = params['ssh']['keypair']
 
             bmap = self._get_bmap(params)
-            connection = self._get_connection(params)
+            image = self.get_image(params)
 
-            reservation = connection.run_instances(
-                params['ami'],
+            reservation = image.run(
                 instance_type=params['cloudhwname'],
                 key_name=ssh_key_name,
                 block_device_map=bmap,
@@ -58,7 +98,6 @@ class EC2(AbstractCloud):
                 self.logger.debug('waiting for %s %s %s', params['region'], params['ami'], params['cloudhwname'])
                 time.sleep(5)
                 count += 1
-            connection.close()
             instance_state = myinstance.update()
             if instance_state == 'running':
                 # Instance appeared - scheduling 'setup' stage
@@ -93,12 +132,6 @@ class EC2(AbstractCloud):
             if str(err).find('<Code>InstanceLimitExceeded</Code>') != -1:
                 # InstanceLimit is temporary problem
                 raise TemporaryCloudException('got InstanceLimitExceeded - not increasing ntry')
-            elif str(err).find('<Code>InvalidParameterValue</Code>') != -1:
-                # InvalidParameterValue is really bad
-                raise PermanentCloudException('got error during instance creation: %s' % err)
-            elif str(err).find('<Code>InvalidAMIID.NotFound</Code>') != -1:
-                # No such AMI in the region
-                raise PermanentCloudException('AMI %s not found in %s' % (params['ami'], params['region']))
             elif str(err).find('<Code>AuthFailure</Code>') != -1:
                 # Not authorized is permanent
                 raise PermanentCloudException('not authorized for AMI %s in %s' % (params['ami'], params['region']))
@@ -110,36 +143,29 @@ class EC2(AbstractCloud):
                 raise SkipCloudException('got InvalidSubnetID - skipping: %s, %s, %s (%s)' % (params['ami'],
                                             params['region'], params['itype'], err))
             else:
-                raise UnknownCloudException('Unknown boto error during instance creation: ' + traceback.format_exc())
-        except socket.error, err:
-            # Unexpected error happened
-            raise TemporaryCloudException('Socket error during instance creation: ' + traceback.format_exc())
-        except Exception, err:
-            # Unexpected error happened
-            raise UnknownCloudException('Unknown error during instance creation: ' + traceback.format_exc())
+                raise
 
+    def get_instance(self, params):
+        with self.connection(params) as connection:
+            try:
+                instance = connection.get_only_instances([params['id']])[0]
+            except IndexError:
+                raise PermanentCloudException('no instances found for %s' % params['id'])
+        return instance
 
     def update(self, params):
-        try:
-            connection = self._get_connection(params)
-            myinstance = connection.get_only_instances([params['id']])[0]
-        except (IndexError, boto.exception.EC2ResponseError) as err:
-            raise PermanentCloudException('no instances found for %s' % params['id'])
+        myinstance = self.get_instance(params)
         result = myinstance.__dict__.copy()
         params['instance'] = result
         params['hostname'] = result['public_dns_name'] or result['private_ip_address']
 
     def terminate(self, params):
-        try:
-            connection = self._get_connection(params)
-            res = connection.terminate_instances([params['id']])
-        except Exception, err:
-            raise UnknownCloudException('Unknown error during instance termination: %s (%s)' % (err, traceback.format_exc()))
-        return res
+        instance = self.get_instance(params)
+        instance.terminate()
 
     def get_console_output(self, params):
-        connection = self._get_connection(params)
-        return connection.get_console_output(params['id']).output
+        instance = self.get_instance(params)
+        return instance.get_console_output().output
 
     def _get_connection(self, params):
         ec2_access_key, ec2_secret_key = params['credentials']['ec2_access_key'], params['credentials']['ec2_secret_key']
