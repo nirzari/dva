@@ -4,7 +4,7 @@ basic serial test processor
 import time
 import logging
 import traceback
-from stage import create_instance, attempt_ssh, allow_root_login, global_setup_script, terminate_instance
+from stage import assert_image, create_instance, attempt_ssh, allow_root_login, global_setup_script, terminate_instance
 from test import execute_stages, TEST_WORKER_POOL_SIZE
 from common import RESULT_ERROR
 from stage import STAGES, StageError, SkipError
@@ -17,6 +17,8 @@ def process(params, pool_size=TEST_WORKER_POOL_SIZE, sorted_mode=False):
     '''process required acctions'''
     terminate = False
     try:
+        params = assert_image(params)
+        yield params
         params = create_instance(params)
         terminate = True
         yield params

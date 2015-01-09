@@ -72,6 +72,26 @@ def stage(fn):
 
 @stage
 @when_enabled
+@retrying(maxtries=3, sleep=10, loglevel=logging.DEBUG, final_exception=StageError)
+def assert_image(params):
+    '''
+    assert image properties
+    '''
+    print params['product'], params['cloud']
+    if params['product'] not in ('rhel', 'beta') or params['cloud'] != 'ec2':
+        # only for RHEL images
+        logger.debug('skipping non-rhel/-ec2 image assertions: %s', params['ami'])
+        return params
+    driver = cloud.get_driver(params['cloud'], logger, CLOUD_DRIVER_MAXWAIT)
+    image = driver.get_image(params)
+    # assert image name matches
+    # (Platform)-(Version)-(HVM or not)-(Beta/GA)-(Timestamp)-(Arch)-(Release)
+    # TODO: implement assertions
+    return params
+
+
+@stage
+@when_enabled
 @retrying(maxtries=CREATE_ATTEMPTS, sleep=CLOUD_CREATE_WAIT, loglevel=logging.DEBUG, final_exception=InstantiationError)
 def create_instance(params):
     """
