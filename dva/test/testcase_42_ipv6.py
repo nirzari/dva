@@ -8,12 +8,12 @@ class testcase_42_ipv6(Testcase):
     """
     stages = ['stage1']
     tags = ['default']
-    applicable = {'product': '(?i)RHEL|BETA', 'version': 'OS (< 7.0)'}
+    applicable = {'platform': '(?i)RHEL|BETA', 'version': 'OS (< 7.0)'}
 
     def test(self, connection, params):
         """ Perform test """
 
-        prod = params['product'].upper()
+        prod = params['platform'].upper()
         if prod in ['RHEL', 'RHEL6', 'BETA']:
             self.get_return_value(connection, 'grep NETWORKING_IPV6=no /etc/sysconfig/network')
         else:

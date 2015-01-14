@@ -15,7 +15,7 @@ class testcase_03_running_services(Testcase):
     def test(self, connection, params):
         """ Perform test """
 
-        prod = params['product'].upper()
+        prod = params['platform'].upper()
         ver = params['version']
         with open(self.datadir + '/running_services.yaml') as expected_services_fd:
             all_services = yaml.safe_load(expected_services_fd)
@@ -24,7 +24,7 @@ class testcase_03_running_services(Testcase):
         except KeyError:
             self.log.append({
                 'result': 'skip',
-                'comment': 'unsupported region and/or product-version combination'})
+                'comment': 'unsupported region and/or platform-version combination'})
             return self.log
 
         is_systemd = self.get_result(connection, 'rpm -q systemd > /dev/null && echo True || echo False')

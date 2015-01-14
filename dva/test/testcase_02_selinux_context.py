@@ -10,9 +10,9 @@ EXCLUDED_PATHS = defaultdict(lambda: ['/mnt', '/proc', '/sys'], {
     'ATOMIC': [ '/var/mnt', '/proc', '/sys', '/sysroot/' ]
 })
 
-def restorecon_cmd(product):
+def restorecon_cmd(platform):
     '''return a restorecon cmd  to execute remotely to get list of changes'''
-    return 'restorecon -R -v -n ' +  ' '.join(map(lambda path: '-e ' + path, EXCLUDED_PATHS[product])) + \
+    return 'restorecon -R -v -n ' +  ' '.join(map(lambda path: '-e ' + path, EXCLUDED_PATHS[platform])) + \
         ''' | sed -e 's, context , ,' -e 's,^restorecon reset ,,' '''
 
 class testcase_02_selinux_context(Testcase):
@@ -25,7 +25,7 @@ class testcase_02_selinux_context(Testcase):
     def test(self, connection, params):
         """ Perform test """
 
-        prod = params['product'].upper()
+        prod = params['platform'].upper()
         ver = params['version']
         #get the restorecon output file
         self.ping_pong(connection, restorecon_cmd(prod) + " > /tmp/restorecon_output.txt && echo SUCCESS",
@@ -49,7 +49,7 @@ class testcase_02_selinux_context(Testcase):
             restorecon_dict[filename] = [source_context, destination_context]
         #figure out if there are new/lost entries or the restorecon output matched the list of allowed exclusions
         with open(self.datadir + '/selinux_context.yaml') as selinux_context:
-            # by default, no SELinux issues are expected for untracked product/version combinations
+            # by default, no SELinux issues are expected for untracked platform/version combinations
             context_exclusions = defaultdict(lambda: {}, yaml.load(selinux_context))['%s_%s' % (prod, ver)]
 
         lost_entries = []

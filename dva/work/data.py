@@ -214,7 +214,7 @@ def save_result(stream, result):
 
 def brief(record):
     '''return a brief info about the record'''
-    return '%(region)s %(ami)s %(cloudhwname)s %(product)s %(version)s %(itype)s' % record
+    return '%(region)s %(ami)s %(cloudhwname)s %(platform)s %(version)s %(itype)s' % record
 
 
 def strip_ephemeral(record):

@@ -35,12 +35,12 @@ class FactoryRegistry(type):
         return a function to check the applicability based on the parameters
         USAGE
             1) create a tag filter check function based on restrictions
-            check_function = filter_factory(applicable={'version': 'Whatever (>=1.0, != 42.0)'}, not_applicable={'product': 'AvoidFoo'})
+            check_function = filter_factory(applicable={'version': 'Whatever (>=1.0, != 42.0)'}, not_applicable={'platform': 'AvoidFoo'})
             2) apply the filter to various tags to get a True/False result
-            check_function({'version': '1.0', 'product': 'CoolBar'}) == True
-            check_function({'version': '42.0', 'product': 'coolBar'}) == False # doesn't match version requirement
-            check_function({'version': '1.0', 'product': 'AvoidFoo'}) == False # matches not_applicable product spec
-            check_function({'version': '42.0', 'product': 'AvoidFoo'}) == False # doesn't match version requirement and matches not_applicable product spec
+            check_function({'version': '1.0', 'platform': 'CoolBar'}) == True
+            check_function({'version': '42.0', 'platform': 'coolBar'}) == False # doesn't match version requirement
+            check_function({'version': '1.0', 'platform': 'AvoidFoo'}) == False # matches not_applicable platform spec
+            check_function({'version': '42.0', 'platform': 'AvoidFoo'}) == False # doesn't match version requirement and matches not_applicable platform spec
         '''
         return lambda check_spec: all([mcs._key_check_map[spec_key](applicable[spec_key])(spec_value) \
                                         for spec_key, spec_value in check_spec.items() if spec_key in applicable]) and \

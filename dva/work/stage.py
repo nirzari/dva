@@ -77,7 +77,7 @@ def assert_image(params):
     '''
     assert image properties
     '''
-    if params['product'] not in ('rhel', 'beta') or params['cloud'] != 'ec2':
+    if params['platform'] not in ('rhel', 'beta') or params['cloud'] != 'ec2':
         # only for RHEL images
         logger.debug('skipping non-rhel/-ec2 image assertions: %s', params['ami'])
         return params

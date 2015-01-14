@@ -8,7 +8,7 @@ class testcase_22_gpg_keys(Testcase):
     """
 
     stages = ['stage1']
-    applicable = {'product': '(?i)RHEL|BETA', 'version': 'OS (>=5.5, <7.0)'}
+    applicable = {'platform': '(?i)RHEL|BETA', 'version': 'OS (>=5.5, <7.0)'}
     tags = ['default']
 
     def test(self, connection, params):
@@ -21,6 +21,6 @@ class testcase_22_gpg_keys(Testcase):
             self.get_return_value(connection, 'rpm -q gpg-pubkey-fd431d51-4ae0493b', 30)
         elif params['version'].startswith('5.'):
             self.get_return_value(connection, 'rpm -q gpg-pubkey-37017186-45761324', 30)
-        if params['product'].upper() == 'BETA':
+        if params['platform'].upper() == 'BETA':
             self.get_return_value(connection, 'test -f /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-beta')
         return self.log

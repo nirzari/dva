@@ -8,7 +8,7 @@ class testcase_28_iptables(Testcase):
     Note that in rhel6.5 iptables are disabled by default and it should be no pre-loaded rules
     """
     stages = ['stage1']
-    applicable = {'product': '(?i)RHEL|BETA', 'version': 'OS (>=5.5, <6.5)'}
+    applicable = {'platform': '(?i)RHEL|BETA', 'version': 'OS (>=5.5, <6.5)'}
     tags = ['default']
 
     def test(self, connection, params):

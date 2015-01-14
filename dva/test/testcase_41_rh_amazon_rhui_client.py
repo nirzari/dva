@@ -8,12 +8,12 @@ class testcase_41_rh_amazon_rhui_client(Testcase):
     """
     tags = ['default']
     stages = ['stage1']
-    not_applicable = {'product': '(?i)FEDORA|ATOMIC'}
+    not_applicable = {'platform': '(?i)FEDORA|ATOMIC'}
 
     def test(self, connection, params):
         """ Perform test """
 
-        prod = params['product'].upper()
+        prod = params['platform'].upper()
         ver = params['version']
         if prod == 'RHEL':
             self.get_return_value(connection, 'rpm -q rh-amazon-rhui-client')
@@ -32,6 +32,6 @@ class testcase_41_rh_amazon_rhui_client(Testcase):
         elif prod == "GRID":
             self.get_return_value(connection, 'rpm -q rh-amazon-rhui-client-mrg')
         else:
-            self.log.append({'result': 'skip', 'comment': 'not applicable for this product/version'})
+            self.log.append({'result': 'skip', 'comment': 'not applicable for this platform/version'})
 
         return self.log

@@ -8,7 +8,7 @@ class testcase_04_cloud_firstboot(Testcase):
     Check that rh-cloud-firstboot is disabled
     """
     stages = ['stage1']
-    applicable = {'product': '(?i)RHEL|BETA', 'version': 'OS (>=5.5, <7.0)'}
+    applicable = {'platform': '(?i)RHEL|BETA', 'version': 'OS (>=5.5, <7.0)'}
     tags = ['default']
 
     # pylint: disable=W0613

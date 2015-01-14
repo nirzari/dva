@@ -12,7 +12,7 @@ class testcase_18_sshd(Testcase):
     def test(self, connection, params):
         """ Perform test """
 
-        prod = params['product'].upper()
+        prod = params['platform'].upper()
         ver = params['version']
         is_systemd = self.get_result(connection, 'rpm -q systemd > /dev/null && echo True || echo False')
         if is_systemd == 'True':

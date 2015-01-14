@@ -13,7 +13,7 @@ class testcase_90_3_bug1074660(Testcase):
     def test(self, connection, params):
         """ Perform test """
 
-        prod = params['product'].upper()
+        prod = params['platform'].upper()
         ver = params['version'].upper()
         self.get_return_value(connection, 'yum -y install gcc-c++ wget', 300)
         self.get_return_value(connection, 'wget http://www.la-samhna.de/samhain/samhain_signed-2.8.6.tar.gz', 300)

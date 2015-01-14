@@ -15,7 +15,7 @@ class testcase_32_ephemeral(Testcase):
     def test(self, connection, params):
         """ Perform test """
 
-        prod = params['product'].upper()
+        prod = params['platform'].upper()
         ver = params['version'].upper()
         ephemerals = []
 

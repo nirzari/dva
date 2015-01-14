@@ -10,12 +10,12 @@ class testcase_60_yum_update(Testcase):
     stages = ['stage1']
     tags = ['default', 'content']
     after = ['testcase_55_yum_group_install']
-    applicable = {"product": "(?i)RHEL|BETA", "version": "OS (>=5.5, !=6.0)"}
+    applicable = {"platform": "(?i)RHEL|BETA", "version": "OS (>=5.5, !=6.0)"}
 
     def test(self, connection, params):
         """ Perform test """
 
-        prod = params['product'].upper()
+        prod = params['platform'].upper()
         ver = params['version']
         if prod in ['RHEL', 'BETA'] and ver.startswith('6.') and params['cloudhwname'] == 't1.micro':
             # Creating swap to workaround mem<1024M issue

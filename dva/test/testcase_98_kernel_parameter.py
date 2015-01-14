@@ -16,7 +16,7 @@ class testcase_98_kernel_parameter(Testcase):
     def test(self, connection, params):
         """ Perform test """
 
-        prod = params['product'].upper()
+        prod = params['platform'].upper()
         ver = params['version']
         if 'kernelparams' in params:
             self.get_return_value(connection, 'sed -i \'s,\\(kernel .*$\\),\\1 %s,\' /boot/grub/grub.conf' % params['kernelparams'])

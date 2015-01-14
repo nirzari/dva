@@ -10,7 +10,7 @@ class testcase_20_auditd(Testcase):
     - config files shoud have specified checksums
     """
     stages = ['stage1']
-    applicable = {'product': '(?i)RHEL|BETA', 'version': r'5\..*|6\..*|7\..*'}
+    applicable = {'platform': '(?i)RHEL|BETA', 'version': r'5\..*|6\..*|7\..*'}
     tags = ['default']
 
     def test(self, connection, params):

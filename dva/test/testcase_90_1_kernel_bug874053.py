@@ -9,7 +9,7 @@ class testcase_90_1_kernel_bug874053(Testcase):
     """
     stages = ['stage1']
     tags = ['kernel']
-    not_applicable = {'product': '(?i)ATOMIC'}
+    not_applicable = {'platform': '(?i)ATOMIC'}
 
     def test(self, connection, params):
         """ Perform test """
@@ -19,10 +19,10 @@ class testcase_90_1_kernel_bug874053(Testcase):
                              'comment': 'Inappropriate bmap'
                              })
             return self.log
-        if (params['product'].upper() == 'RHEL' or params['product'].upper() == 'BETA') and params['version'].startswith('6.'):
+        if (params['platform'].upper() == 'RHEL' or params['platform'].upper() == 'BETA') and params['version'].startswith('6.'):
             # Will assume EL6 device mapping
             devlist = ['xvdf', 'xvdg', 'xvdh', 'xvdi', 'xvdj', 'xvdk', 'xvdl']
-        elif (params['product'].upper() == 'RHEL' or params['product'].upper() == 'BETA') and params['version'].startswith('5.'):
+        elif (params['platform'].upper() == 'RHEL' or params['platform'].upper() == 'BETA') and params['version'].startswith('5.'):
             # Will assume EL5 device mapping
             devlist = ['sdb', 'sdc', 'sdd', 'sde', 'sdf', 'sdg', 'sdh']
         else:

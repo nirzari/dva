@@ -10,7 +10,7 @@ class testcase_11_package_set(Testcase):
     /usr/share/dva/data/packages_<name>  are present
     """
     stages = ['stage1']
-    applicable = {'product': '(?i)RHEL|BETA|FEDORA'}
+    applicable = {'platform': '(?i)RHEL|BETA|FEDORA'}
     tags = ['default']
 
     def test(self, connection, params):
@@ -23,7 +23,7 @@ class testcase_11_package_set(Testcase):
         if packages:
             basepath = self.datadir + '/packages_'
             path = ''
-            if params['product'].upper() == 'FEDORA':
+            if params['platform'].upper() == 'FEDORA':
                 basepath += 'fedora_'
                 if os.path.exists(basepath + params['version']):
                     path = basepath + params['version']
@@ -45,7 +45,7 @@ class testcase_11_package_set(Testcase):
             difference = package_set_requred.difference(package_set_got)
             difference_new = package_set_got.difference(package_set_requred)
             self.log.append({'result': 'passed', 'comment': 'Newly introduced packages: ' + str(sorted(list(difference_new)))})
-            if params['product'].upper() == 'BETA' and len(difference) > 1:
+            if params['platform'].upper() == 'BETA' and len(difference) > 1:
                 self.log.append({'result': 'failed', 'comment': 'Beta may lack not more than 1 package: ' + str(sorted(list(difference)))})
             elif len(difference) > 1:
                 self.log.append({'result': 'failed', 'comment': 'some packages are missing: ' + str(sorted(list(difference)))})

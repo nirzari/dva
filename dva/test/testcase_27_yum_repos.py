@@ -8,14 +8,14 @@ class testcase_27_yum_repos(Testcase):
     Check for enabled yum repos
     """
     stages = ['stage1']
-    applicable = {'product': '(?i)RHEL|BETA', 'version': 'OS (>=5.5, !=6.0)'}
+    applicable = {'platform': '(?i)RHEL|BETA', 'version': 'OS (>=5.5, !=6.0)'}
     after = ['testcase_24_yum_plugin']
     tags = ['default', 'content']
 
     def test(self, connection, params):
         """ Perform test """
 
-        prod = params['product'].upper()
+        prod = params['platform'].upper()
         ver = params['version']
         if connection.rpyc is None:
             self.log.append({
@@ -35,7 +35,7 @@ class testcase_27_yum_repos(Testcase):
         except KeyError:
             self.log.append({
                 'result': 'skip',
-                'comment': 'unsupported region and/or product-version combination'})
+                'comment': 'unsupported region and/or platform-version combination'})
             return self.log
         # expand %region%
         expected_repos = {}

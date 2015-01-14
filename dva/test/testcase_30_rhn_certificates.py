@@ -30,13 +30,13 @@ class testcase_30_rhn_certificates(Testcase):
     Check for rhn certificates lifetime
     """
     stages = ['stage1']
-    applicable = {'product': '(?i)RHEL|BETA', 'version': 'OS (>= 5.5)'}
+    applicable = {'platform': '(?i)RHEL|BETA', 'version': 'OS (>= 5.5)'}
     tags = ['default']
 
     def test(self, connection, params):
         """ Perform test """
 
-        if params['product'].upper() == 'BETA':
+        if params['platform'].upper() == 'BETA':
             config_rpms = 'rh-amazon-rhui-client rh-amazon-rhui-client-beta'
         else:
             config_rpms = 'rh-amazon-rhui-client'

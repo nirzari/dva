@@ -16,7 +16,7 @@ class testcase_25_uname(Testcase):
     def test(self, connection, params):
         """ Perform test """
 
-        prod = params['product'].upper()
+        prod = params['platform'].upper()
         ver = params['version']
         kernel_ver = None
         uname_r = None
@@ -38,7 +38,7 @@ class testcase_25_uname(Testcase):
                 kernel_ver = self.get_result(connection, 'rpm -q --queryformat \'%{VERSION}-%{RELEASE}.%{ARCH}\n\' kernel | sort | tail -1', 30)
 
         if not kernel_ver or not uname_r:
-            self.log.append({'result': 'skip', 'comment': 'not applicable for this product/version'})
+            self.log.append({'result': 'skip', 'comment': 'not applicable for this platform/version'})
             return self.log
 
         uname_o = self.get_result(connection, 'uname -o')

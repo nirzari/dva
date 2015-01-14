@@ -9,12 +9,12 @@ class testcase_90_2_cgroups_kernel_bug914737(Testcase):
     """
     stages = ['stage1']
     tags = ['kernel']
-    not_applicable = {'product': '(?i)ATOMIC'}
+    not_applicable = {'platform': '(?i)ATOMIC'}
 
     def test(self, connection, params):
         """ Perform test """
 
-        prod = params['product'].upper()
+        prod = params['platform'].upper()
         ver = params['version'].upper()
         # pylint: disable=W0702
         try:

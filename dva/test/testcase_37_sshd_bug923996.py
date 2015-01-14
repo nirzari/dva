@@ -10,7 +10,7 @@ class testcase_37_sshd_bug923996(Testcase):
     stages = ['stage2']
     tags = ['default']
     applicable = {
-        'product': '(?i)RHEL|BETA',
+        'platform': '(?i)RHEL|BETA',
         'version': lambda ver: ver >= Version('5.5') and ver < Version('5.10') or \
                             ver >= Version('6.5') and ver < Version('7.0')
     }

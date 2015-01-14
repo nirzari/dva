@@ -44,10 +44,10 @@ def connect(url, user, password):
     return ret
 
 @retrying(maxtries=MAXTRIES, sleep=SLEEP)
-def create_bug(connection, summary, version, arch, component=DEFAULT_COMPONENT, product=DEFAULT_PRODUCT,
+def create_bug(connection, summary, version, arch, component=DEFAULT_COMPONENT, bugzilla_product=DEFAULT_PRODUCT,
     op_sys='Linux', keywords=['TestOnly']):
     '''create particular bug'''
-    return connection.createbug(product=product, component=component, version='RHEL' + str(version),
+    return connection.createbug(product=bugzilla_product, component=component, version='RHEL' + str(version),
                 rep_platform=arch, summary=summary, op_sys=op_sys, keywords=keywords)
 
 @retrying(maxtries=MAXTRIES, sleep=SLEEP, final_exception=AssertionError)
@@ -77,33 +77,38 @@ def comment_bug(connection, bug, comment):
     logger.debug('bz %s added comment %s: %s', bug.bug_id, comment, res)
 
 
-def process_ami_record(ami, version, arch, region, itype, user, password, ami_data,
-        url=DEFAULT_URL, component=DEFAULT_COMPONENT, product=DEFAULT_PRODUCT, verbose=False):
+def process_ami_record(ami_key, ami_data, user=None, password=None,
+        url=DEFAULT_URL, component=DEFAULT_COMPONENT, bugzilla_product=DEFAULT_PRODUCT,
+        verbose=False):
     '''process one ami record creating bug with comment per hwp'''
     connection = connect(url, user, password)
-    summary = '%s %s %s %s %s' % (ami, version, arch, itype, region)
-    bug = create_bug(connection, summary, version, arch, component, product)
+    summary = " ".join(ami_key)
+    region, platform, product, version, arch, itype, ami = ami_key
+    bug = create_bug(connection, summary, version, arch, component, bugzilla_product)
     create_bug_log_attachment(connection, bug, ami, ami_data)
     ami_result = RESULT_PASSED
-    for hwp in ami_data:
-        sub_result, sub_log = get_hwp_result(ami_data[hwp], verbose)
+    data = aggregate.nested(ami_data, 'cloudhwname')
+    for hwp in data:
+        sub_result, sub_log = get_hwp_result(data[hwp], verbose)
         if sub_result not in [RESULT_PASSED, RESULT_SKIP] and ami_result == RESULT_PASSED:
             ami_result = sub_result
         bug.addcomment('# %s: %s\n%s' % (hwp, sub_result, '\n'.join(sub_log)))
     bug.setstatus(ami_result == RESULT_PASSED and 'VERIFIED' or 'ON_QA')
     return bug.bug_id, ami, ami_result
 
-def process_ami_record_debug(ami, version, arch, region, itype, user, password, ami_data,
-        url=DEFAULT_URL, component=DEFAULT_COMPONENT, product=DEFAULT_PRODUCT, verbose=False):
+def process_ami_record_debug(ami_key, ami_data, user=None, password=None,
+        url=DEFAULT_URL, component=DEFAULT_COMPONENT, bugzilla_product=DEFAULT_PRODUCT,
+        verbose=False):
     '''process one ami record creating bug with comment per hwp'''
-    summary = '%s %s %s %s %s' % (ami, version, arch, itype, region)
-    logger.debug('*** Summary for bug: %s %s %s %s %s', ami, version, arch, itype, region)
+    summary = " ".join(ami_key)
+    ami = ami_key[-1]
+    logger.debug('*** Summary for bug: %s', summary)
     logger.debug('*** Ami data: %s', ami_data)
     bug = 'not created'
-    logger.debug('version: %s, arch: %s, component: %s, product: %s', version, arch, component, product)
     ami_result = RESULT_PASSED
-    for hwp in ami_data:
-        sub_result, sub_log = get_hwp_result(ami_data[hwp], verbose)
+    data = aggregate.nested(ami_data, 'cloudhwname')
+    for hwp in data:
+        sub_result, sub_log = get_hwp_result(data[hwp], verbose)
         if sub_result not in [RESULT_PASSED, RESULT_SKIP] and ami_result == RESULT_PASSED:
             ami_result = sub_result
         logger.debug('.....adding comment: # %s: %s\n%s' % (hwp, sub_result, '\n'.join(sub_log)))
@@ -112,31 +117,22 @@ def process_ami_record_debug(ami, version, arch, region, itype, user, password, 
 
 
 def main(config, istream, ostream, user=None, password=None, url=DEFAULT_URL, component=DEFAULT_COMPONENT,
-         product=DEFAULT_PRODUCT, verbose=False, pool_size=128, debug_mode=False):
+         bugzilla_product=DEFAULT_PRODUCT, verbose=False, pool_size=128, debug_mode=False):
     user, password = bugzilla_credentials(config)
     logger.debug('got credentials: %s, %s', user, password)
-    statuses = []
     data = load_yaml(istream)
-    agg_data = aggregate.nested(data, 'region', 'version', 'arch', 'itype', 'ami', 'cloudhwname')
-    for region in agg_data:
-        logger.debug(region)
-        for version in agg_data[region]:
-            logger.debug(version)
-            for arch in agg_data[region][version]:
-                logger.debug(arch)
-                for itype in agg_data[region][version][arch]:
-                    logger.debug(itype)
-                    for ami in agg_data[region][version][arch][itype]:
-                        logger.debug(ami)
-                        statuses.append((ami, version, arch, region, itype, user, password,
-                             agg_data[region][version][arch][itype][ami], url,
-                             component, product))
+    agg_data = aggregate.flat(data, 'region', 'platform', 'product', 'version', 'arch', 'itype',
+                                'ami')
     pool = Pool(size=pool_size)
     if debug_mode:
         #There will be enhancement to have for each ami output in the file
-        statuses = pool.map(lambda args: process_ami_record_debug(*args), statuses)
+        statuses = pool.map(lambda (key, data): process_ami_record_debug(key, data, user=user,
+            password=password, url=url, component=component, bugzilla_product=bugzilla_product),
+            agg_data.items())
     else:
-        statuses = pool.map(lambda args: process_ami_record(*args), statuses)
+        statuses = pool.map(lambda (key, data): process_ami_record(key, data, user=user,
+            password=password, url=url, component=component, bugzilla_product=bugzilla_product),
+            agg_data.items())
     for bug, ami, status in statuses:
         save_result(ostream, dict(bug=bug, id=ami, status=status))
     return all([status == RESULT_PASSED for _, status, _ in statuses]) and 0 or 1

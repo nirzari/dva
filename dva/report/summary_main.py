@@ -53,7 +53,7 @@ def print_xunit(data, aname, area):
     testsuite = {}
     for name,data in agg_data.items():
         for test in data:
-            classname = '%s-%s.%s' % (test['product'],test['arch'],name[0])
+            classname = '%s-%s.%s' % (test['platform'],test['arch'],name[0])
             ami = name[0]
             if not (ami in error): error[ami] = 0
             if not (ami in fail): fail[ami] = 0

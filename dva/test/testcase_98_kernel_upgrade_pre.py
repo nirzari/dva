@@ -16,7 +16,7 @@ class testcase_98_kernel_upgrade_pre(Testcase):
     def test(self, connection, params):
         """ Perform test """
 
-        prod = params['product'].upper()
+        prod = params['platform'].upper()
         ver = params['version']
         if (prod in ['RHEL', 'BETA']) and (ver.startswith('6.')):
             # remove bfa-firmware - conflicts with new RHEL6 kernel

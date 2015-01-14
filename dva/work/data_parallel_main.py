@@ -8,7 +8,6 @@ from gevent.pool import Pool
 import logging
 from data import load, save_result, strip_ephemeral
 from serial_process import process, required_actions_count, print_progress_info
-from serial_main import process, required_actions_count, print_progress_info
 logger = logging.getLogger(__name__)
 
 PROCESSED=0

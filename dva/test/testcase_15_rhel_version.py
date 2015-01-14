@@ -8,13 +8,13 @@ class testcase_15_rhel_version(Testcase):
     Check redhat-release version
     """
     stages = ['stage1']
-    applicable = {'product': '(?i)RHEL|BETA'}
+    applicable = {'platform': '(?i)RHEL|BETA'}
     tags = ['default']
 
     def test(self, connection, params):
         """ Perform test """
 
-        prod = params['product'].upper()
+        prod = params['platform'].upper()
         if prod in ['RHEL', 'BETA'] and params['version'].startswith('7.'):
             rhelv = self.match(connection, 'rpm -q --qf \'%{VERSION}\n\' --whatprovides redhat-release',
                                re.compile(r'.*\r\n([0-9]\.[0-9]+)\r\n.*', re.DOTALL))

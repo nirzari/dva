@@ -18,6 +18,6 @@ class testcase_06_inittab(Testcase):
             self.ping_pong(connection, 'readlink -f /etc/systemd/system/default.target', '/lib/systemd/system/multi-user.target')
         else:
             self.ping_pong(connection, 'grep \'^id:\' /etc/inittab', 'id:3:initdefault')
-            if (params['product'].upper() == 'RHEL' or params['product'].upper() == 'BETA') and params['version'].startswith('5.'):
+            if (params['platform'].upper() == 'RHEL' or params['platform'].upper() == 'BETA') and params['version'].startswith('5.'):
                 self.ping_pong(connection, 'grep \'^si:\' /etc/inittab', 'si::sysinit:/etc/rc.d/rc.sysinit')
         return self.log

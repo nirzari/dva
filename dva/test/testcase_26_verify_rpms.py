@@ -13,7 +13,7 @@ class testcase_26_verify_rpms(Testcase):
     def test(self, connection, params):
         """ Perform test """
 
-        prod = params['product'].upper()
+        prod = params['platform'].upper()
         ver = params['version']
 
         if connection.rpyc is None:
@@ -51,7 +51,7 @@ class testcase_26_verify_rpms(Testcase):
         except KeyError:
             self.log.append({
                 'result': 'skip',
-                'comment': 'unsupported region and/or product-version combination'})
+                'comment': 'unsupported region and/or platform-version combination'})
             return self.log
 
         ret = {

@@ -11,7 +11,7 @@ class testcase_05_grub(Testcase):
     - hard drive is not (hd0,0) for paravirtual
     """
     stages = ['stage1']
-    applicable = {'product': '(?i)RHEL|BETA', 'version': 'OS (>=5.5, <7.0)'}
+    applicable = {'platform': '(?i)RHEL|BETA', 'version': 'OS (>=5.5, <7.0)'}
     tags = ['default']
 
     def test(self, connection, params):

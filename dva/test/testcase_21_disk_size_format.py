@@ -5,7 +5,7 @@ from distutils.version import LooseVersion
 
 
 def mount2fsys(prod, vers, mpoint):
-    '''return expected fsys for particular mountpoint/product/version combination'''
+    '''return expected fsys for particular mountpoint/platform/version combination'''
     if vers < '6.0':
         # ext3 for RHEL5 any mpoint
         return 'ext3'
@@ -34,12 +34,12 @@ class testcase_21_disk_size_format(Testcase):
     """
     stages = ['stage1']
     tags = ['default']
-    applicable = {'product': '(?i)RHEL|BETA|ATOMIC'}
+    applicable = {'platform': '(?i)RHEL|BETA|ATOMIC'}
 
     def test(self, connection, params):
         """ Perform test """
 
-        prod = params['product'].upper()
+        prod = params['platform'].upper()
         vers = LooseVersion(params['version'])
 
         disks = self.get_result(connection, 'mount | grep \'^/dev\' | awk \'{print $1}\'')

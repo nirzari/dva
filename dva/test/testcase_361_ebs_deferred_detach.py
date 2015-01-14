@@ -21,7 +21,7 @@ class testcase_361_ebs_deferred_detach(Testcase):
     def test(self, connection, params):
         """ Perform test """
 
-        prod = params['product'].upper()
+        prod = params['platform'].upper()
         ver = params['version'].upper()
         device = '/dev/sdk'
         if params['cloudhwname'] == 'hs1.8xlarge':
