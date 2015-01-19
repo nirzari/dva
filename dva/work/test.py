@@ -72,8 +72,8 @@ def test_execute(params):
         params['test']['exception'] = traceback.format_exc()
     except SkipException as err:
         # risen by a test case, means this test is skipped
-        params['tests']['result'] = RESULT_SKIP
-        params['tests']['exception'] = traceback.format_exc()
+        params['test']['result'] = RESULT_SKIP
+        params['test']['exception'] = traceback.format_exc()
     else:
         # no assertion errors detected --- check all cmd logs
         test_cmd_results = [cmd['result'] for cmd in test_obj.log if 'result' in cmd]
