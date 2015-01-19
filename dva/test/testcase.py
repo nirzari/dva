@@ -6,6 +6,9 @@ from ..tools.logged import logged
 
 logger = logging.getLogger(__name__)
 
+class SkipException(RuntimeError):
+    '''this test case should be skipped'''
+
 class Testcase(object):
     """ Base test class """
     from ..tools.registry import TestRegistry

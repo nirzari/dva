@@ -14,10 +14,11 @@ from ..connection.cache import get_connection, assert_connection, connection_cac
 from data import brief
 from params import when_enabled
 from params import reload  as params_reload
-from common import RESULT_ERROR, RESULT_PASSED, RESULT_FAILED
+from common import RESULT_ERROR, RESULT_PASSED, RESULT_FAILED, RESULT_SKIP
 from ..tools.retrying import retrying
 from ..connection.contextmanager import connection as connection_ctx
 from ..connection.contextmanager import alive_connection
+from ..test.testcase import SkipException
 
 TEST_WORKER_POOL_SIZE = 10 # the default SSH MaxSessions value
 
@@ -69,6 +70,10 @@ def test_execute(params):
         # not caught in the test case but means the test failed
         params['test']['result'] = RESULT_FAILED
         params['test']['exception'] = traceback.format_exc()
+    except SkipException as err:
+        # risen by a test case, means this test is skipped
+        params['tests']['result'] = RESULT_SKIP
+        params['tests']['exception'] = traceback.format_exc()
     else:
         # no assertion errors detected --- check all cmd logs
         test_cmd_results = [cmd['result'] for cmd in test_obj.log if 'result' in cmd]
