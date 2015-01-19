@@ -33,6 +33,8 @@ def get_test_result(test_data, verbose=False):
         # no test log
         test_log = []
     log = ['%s:%s: %s' % (test_data['stage'], test_data['name'], ret)]
+    if 'exception' in test_data and test_data['exception']:
+        log.append(test_data['exception'])
     if ret != RESULT_PASSED or verbose:
          for command in test_log:
             log.extend(command_repr(command))
