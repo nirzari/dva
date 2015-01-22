@@ -42,6 +42,7 @@ import testcase_38_rclocal_checksum
 import testcase_39_root_is_locked
 import testcase_41_rh_amazon_rhui_client
 import testcase_42_ipv6
+import testcase_43_yum_versionlock
 import testcase_50_yum_package_install
 import testcase_55_yum_group_install
 import testcase_60_yum_update
