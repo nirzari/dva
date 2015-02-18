@@ -1,5 +1,6 @@
 """ This module contains testcase_27_yum_repos test """
 from testcase import Testcase
+from dva.work.common import RESULT_FAILED, RESULT_SKIP
 import yaml
 
 
@@ -19,7 +20,7 @@ class testcase_27_yum_repos(Testcase):
         ver = params['version']
         if connection.rpyc is None:
             self.log.append({
-                'result': 'failure',
+                'result': RESULT_FAILED,
                 'comment': 'test can\'t be performed without RPyC connection'})
             return self.log
         repos = {}
@@ -34,7 +35,7 @@ class testcase_27_yum_repos(Testcase):
             expected_repos_ = all_repos[params['region']]['%s_%s' % (prod, ver)]
         except KeyError:
             self.log.append({
-                'result': 'skip',
+                'result': RESULT_FAILED,
                 'comment': 'unsupported region and/or platform-version combination'})
             return self.log
         # expand %region%
