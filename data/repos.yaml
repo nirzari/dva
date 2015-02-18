@@ -238,6 +238,8 @@ ap-southeast-2:
     <<: *ANY_REGION
 eu-west-1:
     <<: *ANY_REGION
+eu-central-1:
+    <<: *ANY_REGION
 sa-east-1:
     <<: *ANY_REGION
 us-east-1:
@@ -245,4 +247,8 @@ us-east-1:
 us-west-1:
     <<: *ANY_REGION
 us-west-2:
+    <<: *ANY_REGION
+cn-north-1:
+    <<: *ANY_REGION
+us-gov-west-1:
     <<: *ANY_REGION
