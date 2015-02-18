@@ -2,6 +2,7 @@
 from testcase import Testcase
 import StringIO
 import ConfigParser
+from dva.work.common import RESULT_FAILED
 
 
 class testcase_61_yum_proxy(Testcase):
@@ -53,7 +54,7 @@ class testcase_61_yum_proxy(Testcase):
             yum_conf_data = yum_conf_fp.read()
             yum_conf_fp.close()
         except IOError, err:
-            self.log.append({'result': 'failure',
+            self.log.append({'result': RESULT_FAILED,
                              'comment': 'failed to get actual repo list %s' % err
                              })
             return self.log

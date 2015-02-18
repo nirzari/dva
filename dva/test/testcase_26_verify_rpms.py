@@ -1,6 +1,7 @@
 """ This module contains testcase_26_verify_rpms test """
 import yaml
 from testcase import Testcase
+from dva.work.common import RESULT_FAILED
 
 
 class testcase_26_verify_rpms(Testcase):
@@ -18,7 +19,7 @@ class testcase_26_verify_rpms(Testcase):
 
         if connection.rpyc is None:
             self.log.append({
-                'result': 'failure',
+                'result': RESULT_FAILED,
                 'comment': 'test can\'t be performed without RPyC connection'})
             return self.log
 
@@ -33,7 +34,7 @@ class testcase_26_verify_rpms(Testcase):
         out, _ = proc.communicate()
         if proc.returncode != 0:
             self.log.append({
-                'result': 'failure',
+                'result': RESULT_FAILED,
                 'comment': 'failed to get rpm -Va result from host, error %s' % proc.returncode})
             return self.log
 

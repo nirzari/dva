@@ -3,6 +3,7 @@ import time
 import multiprocessing
 import logging
 from testcase import Testcase
+from dva.work.common import RESULT_FAILED
 
 
 class testcase_361_ebs_deferred_detach(Testcase):
@@ -35,7 +36,7 @@ class testcase_361_ebs_deferred_detach(Testcase):
         elif '_placement' in params['instance']:
             volume = ec2connection.create_volume(3, params['instance']['_placement'])
         else:
-            self.log.append({'result': 'failure',
+            self.log.append({'result': RESULT_FAILED,
                              'comment': 'Failed to get instance placement'
                              })
             return self.log
@@ -47,7 +48,7 @@ class testcase_361_ebs_deferred_detach(Testcase):
             time.sleep(1)
             wait += 1
             if wait > 300:
-                self.log.append({'result': 'failure',
+                self.log.append({'result': RESULT_FAILED,
                                  'comment': 'Failed to create EBS volume %s (timeout 300)' % volume.id
                                  })
                 ec2connection.delete_volume(volume.id)

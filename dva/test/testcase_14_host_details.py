@@ -1,5 +1,6 @@
 """ This module contains testcase_14_host_details test """
 from testcase import Testcase
+from dva.work.common import RESULT_FAILED
 import json
 import re
 
@@ -34,7 +35,7 @@ class testcase_14_host_details(Testcase):
                     elif params['itype'] == 'access':
                         self.get_return_value(connection, '[ \'%s\' = \'%s\' ]' % (billing_platform, 'bp-63a5400a'))
             except KeyError as exc:
-                self.log.append({'result': 'failure', 'comment': 'failed to check instance details, ' + exc.message})
+                self.log.append({'result': RESULT_FAILED, 'comment': 'failed to check instance details, ' + exc.message})
         else:
-            self.log.append({'result': 'failure', 'comment': 'failed to get instance details'})
+            self.log.append({'result': RESULT_FAILED, 'comment': 'failed to get instance details'})
         return self.log

@@ -2,6 +2,7 @@
 from testcase import Testcase
 from datetime import datetime
 from distutils.version import LooseVersion as Version
+from dva.work.common import RESULT_FAILED
 import re
 
 
@@ -48,7 +49,7 @@ class testcase_30_rhn_certificates(Testcase):
             expiration_date = _expiration_date(params)
         except ValueError as err:
             # just log and return in case expiration can't be determined
-            self.log.append({'result': 'failure', 'comment': str(err)})
+            self.log.append({'result': RESULT_FAILED, 'comment': str(err)})
             return self.log
         for cert in cert_files:
             # the -dates format is:
