@@ -17,7 +17,7 @@ class testcase_41_rh_amazon_rhui_client(Testcase):
 
         platform = params['platform'].upper()
         product = params['product'].upper()
-        ver = LooseVersion(params['version'])
+        version = LooseVersion(params['version'])
 
         rpm_expr = None
         rpm_count = 1
@@ -29,15 +29,15 @@ class testcase_41_rh_amazon_rhui_client(Testcase):
                 rpm_expr =  re.compile('rh-amazon-rhui-client-\d.*')
             elif product == "RHS":
                 rpm_expr = re.compile('rh-amazon-rhui-client-jbeap5-\d.*')
-            elif product == "JPEAP" and '6.0' <= ver:
+            elif product == "JPEAP" and '6.0' <= version:
                 rpm_expr = re.compile('rh-amazon-rhui-client-jbeap6-\d.*')
-            elif product == "JBEWS" and '1.0' <= ver < '2.0':
+            elif product == "JBEWS" and '1.0' <= version < '2.0':
                 rpm_expr = re.compile('rh-amazon-rhui-client-jbews1-\d.*')
-            elif product == "JBEWS" and '2.0' <= ver:
+            elif product == "JBEWS" and '2.0' <= version:
                 rpm_expr = re.compile('rh-amazon-rhui-client-jbews2-\d.*')
             elif product == "GRID":
                 rpm_expr = re.compile('rh-amazon-rhui-client-mrg-\d.*')
-            elif product == 'SAP' and ver == '6.5':
+            elif product == 'SAP' and version == '6.5':
                 rpm_expr = re.compile('rh-amazon-rhui-client-sap-hana-\d.*')
                 rpm_count = 2 # exception
         elif platform == 'BETA':
