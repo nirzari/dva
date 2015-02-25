@@ -11,6 +11,7 @@ class testcase_41_rh_amazon_rhui_client(Testcase):
     tags = ['default']
     stages = ['stage1']
     applicable = {'cloud': '(?i)EC2', 'platform': '(?i)RHEL|BETA'}
+    not_applicable = {'product': '(?i)ATOMIC'}
 
     def test(self, connection, params):
         """ Perform test """
