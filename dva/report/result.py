@@ -1,7 +1,7 @@
 """ Result parsing functions """
 import textwrap
 import aggregate
-from ..work.common import RESULT_PASSED, RESULT_FAILED, RESULT_ERROR, RESULT_SKIP
+from ..work.common import RESULT_PASSED, RESULT_FAILED, RESULT_ERROR, RESULT_SKIP, RESULT_WAIVED
 
 COMMON_COMMAND_KEYS_ORDERED=('command', 'match', 'result', 'value', 'actual', 'expected', 'comment')
 
@@ -20,7 +20,7 @@ def command_repr(command):
     return ret
 
 
-def get_test_result(test_data, verbose=False):
+def get_test_result(test_data, whitelist=[], verbose=False):
     '''get formated test result'''
     try:
         ret = test_data['result']
@@ -32,6 +32,8 @@ def get_test_result(test_data, verbose=False):
     except KeyError:
         # no test log
         test_log = []
+    if test_data['name'] in whitelist:
+        ret = 'RESULT_WAIVED'
     log = ['%s:%s: %s' % (test_data['stage'], test_data['name'], ret)]
     if 'exception' in test_data and test_data['exception'] and (verbose or \
             ret in [RESULT_FAILED, RESULT_ERROR]):
@@ -54,18 +56,18 @@ def get_stage_result(stage_data, verbose=False):
     return ret, log
 
 
-def get_hwp_result(data, verbose=False):
+def get_hwp_result(data, whitelist=[], verbose=False):
     '''get overal hwp result'''
     ret = RESULT_PASSED
     log = []
     for res in data:
         if 'test' in res:
             # test case result
-            sub_result, sub_log = get_test_result(res['test'], verbose)
+            sub_result, sub_log = get_test_result(res['test'], whitelist, verbose)
         else:
             # stage result
             sub_result, sub_log = get_stage_result(res, verbose)
-        if sub_result in [RESULT_ERROR, RESULT_FAILED, RESULT_SKIP] and ret == RESULT_PASSED:
+        if sub_result in [RESULT_ERROR, RESULT_FAILED, RESULT_SKIP,RESULT_WAIVED] and ret == RESULT_PASSED:
             ret = sub_result
         log.extend(sub_log)
     return ret, log

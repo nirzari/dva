@@ -9,7 +9,7 @@ import tempfile
 import aggregate
 from ..tools.retrying import retrying, EAgain
 from ..work.data import load_yaml, save_result, set_config_filename
-from ..work.common import RESULT_PASSED, RESULT_SKIP
+from ..work.common import RESULT_PASSED, RESULT_SKIP, RESULT_WAIVED
 from result import get_hwp_result
 from gevent.pool import Pool
 from gevent.coros import RLock
@@ -77,7 +77,7 @@ def comment_bug(connection, bug, comment):
     logger.debug('bz %s added comment %s: %s', bug.bug_id, comment, res)
 
 
-def process_ami_record(ami_key, ami_data, user=None, password=None,
+def process_ami_record(ami_key, ami_data, whitelist=[], user=None, password=None,
         url=DEFAULT_URL, component=DEFAULT_COMPONENT, bugzilla_product=DEFAULT_PRODUCT,
         verbose=False):
     '''process one ami record creating bug with comment per hwp'''
@@ -89,14 +89,14 @@ def process_ami_record(ami_key, ami_data, user=None, password=None,
     ami_result = RESULT_PASSED
     data = aggregate.nested(ami_data, 'cloudhwname')
     for hwp in data:
-        sub_result, sub_log = get_hwp_result(data[hwp], verbose)
+        sub_result, sub_log = get_hwp_result(data[hwp], whitelist, verbose)
         if sub_result not in [RESULT_PASSED, RESULT_SKIP] and ami_result == RESULT_PASSED:
             ami_result = sub_result
         bug.addcomment('# %s: %s\n%s' % (hwp, sub_result, '\n'.join(sub_log)))
     bug.setstatus(ami_result == RESULT_PASSED and 'VERIFIED' or 'ON_QA')
     return bug.bug_id, ami, ami_result
 
-def process_ami_record_debug(ami_key, ami_data, user=None, password=None,
+def process_ami_record_debug(ami_key, ami_data, whitelist=[], user=None, password=None,
         url=DEFAULT_URL, component=DEFAULT_COMPONENT, bugzilla_product=DEFAULT_PRODUCT,
         verbose=False):
     '''process one ami record creating bug with comment per hwp'''
@@ -108,7 +108,7 @@ def process_ami_record_debug(ami_key, ami_data, user=None, password=None,
     ami_result = RESULT_PASSED
     data = aggregate.nested(ami_data, 'cloudhwname')
     for hwp in data:
-        sub_result, sub_log = get_hwp_result(data[hwp], verbose)
+        sub_result, sub_log = get_hwp_result(data[hwp], whitelist, verbose)
         if sub_result not in [RESULT_PASSED, RESULT_SKIP] and ami_result == RESULT_PASSED:
             ami_result = sub_result
         logger.debug('.....adding comment: # %s: %s\n%s' % (hwp, sub_result, '\n'.join(sub_log)))
@@ -116,24 +116,25 @@ def process_ami_record_debug(ami_key, ami_data, user=None, password=None,
     return bug, ami, ami_result
 
 
-def main(config, istream, ostream, user=None, password=None, url=DEFAULT_URL, component=DEFAULT_COMPONENT,
+def main(config, istream, ostream, test_whitelist, user=None, password=None, url=DEFAULT_URL, component=DEFAULT_COMPONENT,
          bugzilla_product=DEFAULT_PRODUCT, verbose=False, pool_size=128, debug_mode=False):
     user, password = bugzilla_credentials(config)
     logger.debug('got credentials: %s, %s', user, password)
     data = load_yaml(istream)
+    whitelist = [str(item) for item in test_whitelist[0].split(',')]
     agg_data = aggregate.flat(data, 'region', 'platform', 'product', 'version', 'arch', 'itype',
                                 'ami')
     pool = Pool(size=pool_size)
     if debug_mode:
         #There will be enhancement to have for each ami output in the file
-        statuses = pool.map(lambda (key, data): process_ami_record_debug(key, data, user=user,
+        statuses = pool.map(lambda (key, data): process_ami_record_debug(key, data, whitelist, user=user,
             password=password, url=url, component=component, bugzilla_product=bugzilla_product),
             agg_data.items())
     else:
-        statuses = pool.map(lambda (key, data): process_ami_record(key, data, user=user,
+        statuses = pool.map(lambda (key, data): process_ami_record(key, data, whitelist, user=user,
             password=password, url=url, component=component, bugzilla_product=bugzilla_product),
             agg_data.items())
     for bug, ami, status in statuses:
         save_result(ostream, dict(bug=bug, id=ami, status=status))
-    return all([status == RESULT_PASSED for _, status, _ in statuses]) and 0 or 1
+    return all([status in (RESULT_PASSED,RESULT_WAIVED) for _, status, _ in statuses]) and 0 or 1
 
