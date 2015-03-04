@@ -232,6 +232,31 @@ ANY_REGION: &ANY_REGION
     RHEL_7.1:
         <<: *RHEL_7_1
 
+    SAP_6ANY:
+        <<: *HAS_RHEL_SOURCE
+        <<: *HAS_RHEL_SOURCE_BETA
+        rhui-REGION-client-config-server-6: true
+        rhui-REGION-client-config-server-6-sap-hana: true
+        rhui-REGION-rhel-server-debug-rh-common: false
+        rhui-REGION-rhel-server-debug-rhscl: false
+        rhui-REGION-rhel-server-debug-supplementary: false
+        rhui-REGION-rhel-server-releases: true
+        rhui-REGION-rhel-server-releases-optional: false
+        rhui-REGION-rhel-server-releases-optional-source: false
+        rhui-REGION-rhel-server-releases-source: false
+        rhui-REGION-rhel-server-rh-common: true
+        rhui-REGION-rhel-server-rhscl: false
+        rhui-REGION-rhel-server-source-rh-common: false
+        rhui-REGION-rhel-server-source-rhscl: false
+        rhui-REGION-rhel-server-source-supplementary: false
+        rhui-REGION-rhel-server-supplementary: false
+        rhui-REGION-sap-hana-for-rhui-server-debug: false
+        rhui-REGION-sap-hana-for-rhui-server-rpms: true
+        rhui-REGION-sap-hana-for-rhui-server-source: false
+        rhui-REGION-scalablefilesystem-for-rhui-server-debug: false
+        rhui-REGION-scalablefilesystem-for-rhui-server-rpms: true
+        rhui-REGION-scalablefilesystem-for-rhui-server-source: false
+
 # particular regions follow
 ap-northeast-1:
     <<: *ANY_REGION
