@@ -16,7 +16,8 @@ class testcase_27_yum_repos(Testcase):
     def test(self, connection, params):
         """ Perform test """
 
-        prod = params['platform'].upper()
+        plat = params['platform'].upper()
+        prod = params['product'].upper()
         ver = params['version']
         if connection.rpyc is None:
             self.log.append({
@@ -34,10 +35,13 @@ class testcase_27_yum_repos(Testcase):
         try:
             expected_repos_ = all_repos[params['region']]['%s_%s' % (prod, ver)]
         except KeyError:
-            self.log.append({
-                'result': RESULT_FAILED,
-                'comment': 'unsupported region and/or platform-version combination'})
-            return self.log
+            try:
+                expected_repos_ = all_repos[params['region']]['%s_%s' % (plat, ver)]
+            except KeyError:
+                self.log.append({
+                    'result': RESULT_FAILED,
+                    'comment': 'unsupported region and/or platform-version combination'})
+                return self.log
         # expand %region%
         expected_repos = {}
         for key, val in expected_repos_.items():
