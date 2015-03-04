@@ -14,7 +14,8 @@ class testcase_26_verify_rpms(Testcase):
     def test(self, connection, params):
         """ Perform test """
 
-        prod = params['platform'].upper()
+        plat = params['platform'].upper()
+        prod = params['product'].upper()
         ver = params['version']
 
         if connection.rpyc is None:
@@ -50,10 +51,13 @@ class testcase_26_verify_rpms(Testcase):
         try:
             expected_modified = all_modified['%s_%s' % (prod, ver)]
         except KeyError:
-            self.log.append({
-                'result': 'skip',
-                'comment': 'unsupported region and/or platform-version combination'})
-            return self.log
+            try:
+                expected_modified = all_modified['%s_%s' % (plat, ver)]
+            except KeyError:
+                self.log.append({
+                    'result': 'skip',
+                    'comment': 'unsupported region and/or platform-version combination'})
+                return self.log
 
         ret = {
             'expected modified files': expected_modified,
