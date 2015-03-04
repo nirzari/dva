@@ -132,7 +132,7 @@ RHEL_6.6:
     <<: *RHEL_6ANY
     /etc/ssh/sshd_config: true
 
-SAP_6ANY: &SAP_6ANY
+SAP_6.5:
     /etc/ktune.d/tunedadm.conf: true
     /etc/ssh/sshd_config: true
     /etc/sysconfig/ktune: true

@@ -232,7 +232,7 @@ ANY_REGION: &ANY_REGION
     RHEL_7.1:
         <<: *RHEL_7_1
 
-    SAP_6ANY:
+    SAP_6.5:
         <<: *HAS_RHEL_SOURCE
         <<: *HAS_RHEL_SOURCE_BETA
         rhui-REGION-client-config-server-6: true
