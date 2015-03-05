@@ -26,14 +26,14 @@ def get_test_result(test_data, whitelist=[], verbose=False):
         ret = test_data['result']
     except KeyError:
         # no result -- test skipped
-        ret = 'RESULT_SKIP'
+        ret = RESULT_SKIP
     try:
         test_log = test_data['log']
     except KeyError:
         # no test log
         test_log = []
     if test_data['name'] in whitelist:
-        ret = 'RESULT_WAIVED'
+        ret = RESULT_WAIVED
     log = ['%s:%s: %s' % (test_data['stage'], test_data['name'], ret)]
     if 'exception' in test_data and test_data['exception'] and (verbose or \
             ret in [RESULT_FAILED, RESULT_ERROR]):
@@ -72,13 +72,13 @@ def get_hwp_result(data, whitelist=[], verbose=False):
         log.extend(sub_log)
     return ret, log
 
-def get_ami_result(data, verbose=False):
+def get_ami_result(data, whitelist, verbose=False):
     '''get overal ami result'''
     ret = RESULT_PASSED
     log = []
     for hwp in data:
         hwp_index = len(log)
-        sub_result, sub_log = get_hwp_result(data[hwp], verbose)
+        sub_result, sub_log = get_hwp_result(data[hwp], whitelist, verbose)
         if sub_result not in [RESULT_PASSED, RESULT_SKIP] and ret == RESULT_PASSED:
            ret = sub_result
         header = '%s: %s' % (hwp, sub_result)
@@ -88,7 +88,7 @@ def get_ami_result(data, verbose=False):
         log.extend(sub_log)
     return ret, log
 
-def get_overall_result(data, verbose=False):
+def get_overall_result(data, whitelist=[], verbose=False):
     """
     Get human-readable representation of the result; partitioned by ami
     returns a tuple of an overal result and list of tuples overal_result, [(ami_resutl, ami_log), ...]
@@ -103,7 +103,7 @@ def get_overall_result(data, verbose=False):
         for arch in agg_data[region]:
             for itype in agg_data[region][arch]:
                 for ami in agg_data[region][arch][itype]:
-                    sub_result, sub_log = get_ami_result(agg_data[region][arch][itype][ami], verbose)
+                    sub_result, sub_log = get_ami_result(agg_data[region][arch][itype][ami], whitelist, verbose)
                     if sub_result != RESULT_PASSED and ret == RESULT_PASSED:
                         ret = sub_result
                     ami_header = '%s %s %s %s: %s' % (region, arch, itype, ami, ret)

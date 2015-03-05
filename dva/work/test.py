@@ -14,7 +14,7 @@ from ..connection.cache import get_connection, assert_connection, connection_cac
 from data import brief
 from params import when_enabled
 from params import reload  as params_reload
-from common import RESULT_ERROR, RESULT_PASSED, RESULT_FAILED, RESULT_SKIP
+from common import RESULT_ERROR, RESULT_PASSED, RESULT_FAILED, RESULT_SKIP, RESULT_WAIVED
 from ..tools.retrying import retrying
 from ..connection.contextmanager import connection as connection_ctx
 from ..connection.contextmanager import alive_connection
