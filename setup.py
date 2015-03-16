@@ -11,7 +11,7 @@ setup(name='dva',
     url='https://github.com/RedHatQE/dva',
     license="GPLv3+",
     provides='dva',
-    install_requires=['PyYAML', 'aaargh', 'stitches>=0.7', 'boto',
+    install_requires=['PyYAML', 'aaargh', 'stitches>=0.9', 'boto',
         'gevent', 'html', 'python-bugzilla', 'requests', 'urllib3'],
     packages=[
         'dva', 'dva.test', 'dva.cloud', 'dva.work', 'dva.tools', 'dva.connection', 'dva.report'
