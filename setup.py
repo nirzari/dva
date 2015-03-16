@@ -4,7 +4,7 @@ from setuptools import setup
 import glob
 
 setup(name='dva',
-    version='0.5',
+    version='0.6',
     description="dva's validation. again.",
     author='dparalen',
     author_email='vetrisko@gmail.com',
