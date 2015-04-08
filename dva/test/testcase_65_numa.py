@@ -6,7 +6,7 @@ class testcase_65_numa(Testcase):
     """
     Check if NUMA is enabled on machine
     """
-    stages = ['stage1', 'stage2']
+    stages = ['stage1']
     tags = ['default', 'kernel']
     applicable = {'virtualization': 'hvm', 'platform': '(?i)BETA|RHEL|ATOMIC', 'version': 'OS (>=6.6)', 'cloudhwname': 'c3.*'}
 

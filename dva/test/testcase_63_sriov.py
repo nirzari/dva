@@ -6,7 +6,7 @@ class testcase_63_sriov(Testcase):
     """
     Check various cpu flags
     """
-    stages = ['stage1', 'stage2']
+    stages = ['stage1']
     tags = ['default', 'kernel']
     applicable = {'virtualization': 'hvm', 'platform': '(?i)BETA|RHEL|ATOMIC', 'version': 'OS (>=6.6)'}
 
