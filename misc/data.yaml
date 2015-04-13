@@ -1,0 +1,15 @@
+#This is a sample of data.yaml file for dva input
+- {ami: ami-123456, arch: i386, itype: access, product: RHEL, region: eu-west-1,
+  version: '6.5'}
+- ami: ami-654321 
+  arch:
+     - arch: x86_64
+       cpu: '1'
+       cloudhwname: m3.medium
+       virtualization: hvm
+       memory: '600000'
+  itype: hourly
+  platform: RHEL
+  product: CLOUD
+  region: eu-west-1
+  version: '7.1'
