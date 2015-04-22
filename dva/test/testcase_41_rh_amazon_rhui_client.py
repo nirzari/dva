@@ -22,6 +22,9 @@ class testcase_41_rh_amazon_rhui_client(Testcase):
 
         rpm_expr = None
         rpm_count = 1
+        if platform == 'BETA':
+            #it's ok for BETA to have two clients installed
+            rpm_count = 2
         # what config rpm to assert
         # watch out for prefixes: rh-amazon-rhui-client.*
         # would match any client package name
