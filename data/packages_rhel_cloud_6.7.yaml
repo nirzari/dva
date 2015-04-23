@@ -212,6 +212,8 @@
 - latencytop
 - latencytop-common
 - latencytop-tui
+- lcms-libs
+- ledmon
 - less
 - libICE
 - libSM
