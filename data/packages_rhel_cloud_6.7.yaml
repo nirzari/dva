@@ -10,6 +10,7 @@
 - abrt-addon-python
 - abrt-cli
 - abrt-libs
+- abrt-python
 - abrt-tui
 - acl
 - acpid
@@ -24,6 +25,7 @@
 - audit
 - audit-libs
 - audit-libs-python
+- augeas-libs
 - authconfig
 - autofs
 - avahi-libs
@@ -39,7 +41,6 @@
 - biosdevname
 - blktrace
 - bridge-utils
-- btparser
 - busybox
 - bzip2
 - bzip2-libs
@@ -123,7 +124,6 @@
 - findutils
 - fipscheck
 - fipscheck-lib
-- flac
 - fontconfig
 - fontpackages-filesystem
 - foomatic
@@ -135,14 +135,13 @@
 - freetype
 - gamin
 - gawk
-- gdb
 - gdbm
 - gdbm-devel
+- gdisk
 - gdk-pixbuf2
 - gettext
 - ghostscript
 - ghostscript-fonts
-- giflib
 - glib2
 - glibc
 - glibc-common
@@ -198,10 +197,7 @@
 - iwl6000g2a-firmware
 - iwl6050-firmware
 - jasper-libs
-- java-1.6.0-openjdk
-- java-1.7.0-openjdk
-- jline
-- jpackage-utils
+- json-c
 - kbd
 - kbd-misc
 - kernel
@@ -216,9 +212,6 @@
 - latencytop
 - latencytop-common
 - latencytop-tui
-- latrace
-- lcms-libs
-- ledmon
 - less
 - libICE
 - libSM
@@ -242,7 +235,6 @@
 - libXxf86vm
 - libacl
 - libaio
-- libasyncns
 - libattr
 - libblkid
 - libbasicobjects
@@ -273,7 +265,6 @@
 - libini_config
 - libipa_hbac
 - libipa_hbac-python
-- libitm
 - libjpeg-turbo
 - libldb
 - libmng
@@ -292,11 +283,13 @@
 - libreport
 - libreport-cli
 - libreport-compat
+- libreport-filesystem
 - libreport-plugin-kerneloops
 - libreport-plugin-logger
 - libreport-plugin-mailx
 - libreport-plugin-reportuploader
 - libreport-plugin-rhtsupport
+- libreport-plugin-ureport
 - libreport-python
 - libselinux
 - libselinux-python
@@ -304,7 +297,6 @@
 - libsemanage
 - libsemanage-python
 - libsepol
-- libsndfile
 - libss
 - libssh2
 - libsss_idmap
@@ -382,7 +374,6 @@
 - ntpdate
 - ntsysv
 - numactl
-- numad
 - numpy
 - oddjob
 - oddjob-mkhomedir
@@ -490,7 +481,6 @@
 - psacct
 - psmisc
 - pth
-- pulseaudio-libs
 - pyOpenSSL
 - pycairo
 - pygobject2
@@ -523,7 +513,6 @@
 - python-netaddr
 - python-nose
 - python-nss
-- python-ordereddict
 - python-paramiko
 - python-prettytable
 - python-pycurl
@@ -562,7 +551,7 @@
 - redhat-support-tool
 - rfkill
 - rh-amazon-rhui-client
-- rhino
+- rh-amazon-rhui-client-beta
 - rhn-check
 - rhn-client-tools
 - rhn-setup
@@ -583,6 +572,7 @@
 - samba-winbind
 - samba-winbind-clients
 - samba4-libs
+- satyr
 - scl-utils
 - sed
 - seekwatcher
@@ -631,9 +621,7 @@
 - tmpwatch
 - trace-cmd
 - traceroute
-- ttmkfdir
 - tzdata
-- tzdata-java
 - udev
 - unzip
 - upstart
@@ -646,6 +634,7 @@
 - vconfig
 - vim-common
 - vim-enhanced
+- vim-filesystem
 - vim-minimal
 - virt-what
 - wget
@@ -657,7 +646,6 @@
 - xmlrpc-c
 - xmlrpc-c-client
 - xorg-x11-drv-ati-firmware
-- xorg-x11-fonts-Type1
 - xorg-x11-font-utils
 - xz
 - xz-libs
