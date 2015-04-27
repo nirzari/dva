@@ -32,7 +32,10 @@ def print_failed(data, aname, area, whitelist,area2='cloudhwname'):
             if test.has_key('test'):
                 if test['test']['result'] != 'passed':
                     if test['test']['name'] not in whitelist:
-                        print('   Failed test %s (%s)' % (test['test']['name'],test[area2]))
+                        if test['test']['result'] == 'skip':
+                            print('!  Skipped test %s - most likely not applicable for this configuration.' % test['test']['name'])
+                        else:
+                            print('   Failed test %s (%s)' % (test['test']['name'],test[area2]))
             else:
                 if test['stage_result'] == 'skip':
                     print('!! Skipped - most likely unsupported instance type in region. (%s)' % test[area2])
