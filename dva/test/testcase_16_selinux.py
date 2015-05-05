@@ -17,7 +17,7 @@ class testcase_16_selinux(Testcase):
         product = params['product'].upper()
         version = LooseVersion(params['version'])
 
-        if product == 'SAP' and version == '6.5':
+        if product == 'SAP':
             raise SkipException('Not applicable to: %s/%s' % (product, version))
 
         self.ping_pong(connection, 'getenforce', '\r\nEnforcing\r\n')

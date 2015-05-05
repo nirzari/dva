@@ -139,6 +139,13 @@ SAP_6.5:
     /etc/tuned.conf: true
     <<: *RHEL_6ANY
 
+SAP_6.6:
+    /etc/ktune.d/tunedadm.conf: true
+    /etc/ssh/sshd_config: true
+    /etc/sysconfig/ktune: true
+    /etc/tuned.conf: true
+    <<: *RHEL_6ANY
+
 BETA_7.0:
     /sys: true
     <<: *RHEL_7ANY

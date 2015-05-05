@@ -41,7 +41,7 @@ class testcase_41_rh_amazon_rhui_client(Testcase):
                 rpm_expr = re.compile('rh-amazon-rhui-client-jbews2-\d.*')
             elif product == "GRID":
                 rpm_expr = re.compile('rh-amazon-rhui-client-mrg-\d.*')
-            elif product == 'SAP' and version == '6.5':
+            elif product == 'SAP':
                 rpm_expr = re.compile('rh-amazon-rhui-client-sap-hana-\d.*')
                 rpm_count = 2 # exception
         elif platform == 'BETA':
