@@ -49,6 +49,7 @@ import testcase_55_yum_group_install
 import testcase_60_yum_update
 import testcase_61_yum_proxy
 import testcase_62_cpuflags
+import testcase_63_sriov
 import testcase_80_no_avc_denials
 import testcase_90_1_kernel_bug874053
 import testcase_90_2_cgroups_kernel_bug914737
