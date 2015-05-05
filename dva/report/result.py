@@ -106,8 +106,9 @@ def get_overall_result(data, whitelist=[], verbose=False):
                     sub_result, sub_log = get_ami_result(agg_data[region][arch][itype][ami], whitelist, verbose)
                     if sub_result != RESULT_PASSED and ret == RESULT_PASSED:
                         ret = sub_result
-                    ami_header = '%s %s %s %s: %s' % (region, arch, itype, ami, ret)
-                    sub_log.insert(0, '-' * len(ami_header))
+                    ami_header = '%s %s %s %s: %s' % (region, arch, itype, ami, sub_result)
                     sub_log.insert(0, ami_header)
+                    sub_log.insert(0, '-' * len(ami_header))
+                    sub_log.insert(0, '')
                     log.append((sub_result, sub_log))
     return ret, log
