@@ -132,6 +132,10 @@ class EC2(AbstractCloud):
             if str(err).find('<Code>InstanceLimitExceeded</Code>') != -1:
                 # InstanceLimit is temporary problem
                 raise TemporaryCloudException('got InstanceLimitExceeded - not increasing ntry')
+            elif str(err).find('<Code>InsufficientInstanceCapacity</Code>') != -1:
+                # Instance limit of particular HW type --- skip the instance
+                raise SkipCloudException('got InsufficientInstanceCapacity - skipping: %s, %s, %s (%s)' % (params['ami'],
+                                            params['region'], params['cloudhwname'], err))
             elif str(err).find('<Code>AuthFailure</Code>') != -1:
                 # Not authorized is permanent
                 raise PermanentCloudException('not authorized for AMI %s in %s' % (params['ami'], params['region']))
@@ -141,7 +145,12 @@ class EC2(AbstractCloud):
             elif str(err).find('<Code>InvalidSubnetID.NotFound</Code>') != -1:
                 # Invalid subnet-id --- skip the instantiation
                 raise SkipCloudException('got InvalidSubnetID - skipping: %s, %s, %s (%s)' % (params['ami'],
-                                            params['region'], params['itype'], err))
+                                            params['region'], params['cloudhwname'], err))
+            elif str(err).find('<Code>VPCResourceNotSpecified</Code>') != -1:
+                # HW type requires a VPC to run in --- skip
+                raise SkipCloudException('got VPCResourceNotSpecified - skipping: %s, %s, %s (%s)' % (params['ami'],
+                                            params['region'], params['cloudhwname'], err))
+
             else:
                 raise
 
