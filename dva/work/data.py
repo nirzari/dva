@@ -99,6 +99,14 @@ def record_cloud_config(record, config_file=None):
             'keypair': ssh_config[0],
             'keyfile': ssh_config[1]
         }
+        # vpc configuration propagation
+        if 'subnet' in cloud_config:
+            if region in cloud_config['subnet']:
+                subnet_id = cloud_config['subnet'][region]
+                if type(subnet_id) is list:
+                    # more than one subnet provided --- random pick one
+                    subnet_id = random.choice(subnet_id)
+                record['subnet_id'] = subnet_id
     except KeyError as err:
         raise ConfigError('config %s(:ssh) misses %s' % (config_file, err))
     except IndexError as err:
