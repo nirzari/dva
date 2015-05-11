@@ -5,7 +5,6 @@
   virtualization: hvm
   bmap: &BMAP
   - {delete_on_termination: true, name: /dev/sda1, size: '15'}
-  - {ephemeral_name: ephemeral0, name: /dev/sdf}
   userdata: &USERDATA |
       #! /bin/sh -ex
       yum -y install xdelta
