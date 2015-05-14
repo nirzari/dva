@@ -8,7 +8,7 @@ class testcase_43_yum_versionlock(Testcase):
     tags = ['default']
 
     # atm. relevant for sap only
-    applicable = {'platform': '(?i)RHEL', 'product': '(?i)SAP'}
+    applicable = {'platform': '(?i)RHEL', 'product': '(?i)SAP', 'version': 'OS (<=6.5)'}
 
     def test(self, connection, params):
         '''perform test'''
