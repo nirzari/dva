@@ -160,6 +160,14 @@ class EC2(AbstractCloud):
                 instance = connection.get_only_instances([params['id']])[0]
             except IndexError:
                 raise PermanentCloudException('no instances found for %s' % params['id'])
+            except boto.exception.EC2ResponseError as err:
+                if str(err).find('<Code>InvalidInstanceID.NotFound</Code>') != -1:
+                    # instance already gone
+                    raise PermanentCloudException('no instances found for: %s, %s' % \
+                                                    (params['region'], params['id']))
+                else:
+                    raise PermanentCloudException('%s' % err)
+
         return instance
 
     def update(self, params):
