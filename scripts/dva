@@ -101,6 +101,16 @@ def summary(loglevel, conf, istream,test_whitelist,compare,xunit):
     from dva.report.summary_main import main
     return main(conf, istream,test_whitelist,compare,xunit)
 
+@APP.cmd(help='terminate all created instances')
+@APP.cmd_arg('-i', '--istream', help='input filename', type=argparse.FileType('r'), default=sys.stdin)
+@APP.cmd_arg('-o', '--ostream', help='output filename', type=argparse.FileType('w'), default=sys.stdout)
+@APP.cmd_arg('--cloud', help='Default value is \'ec2\', and \'openstack\' is another option', default='ec2')
+@APP.cmd_arg('-V', '--verbose', help='print the progress', action='store_true')
+def terminate(loglevel, conf, istream, ostream, cloud, verbose):
+    logging.basicConfig(level=getattr(logging, loglevel))
+    from dva.work.terminate import main
+    return main(conf, istream, ostream, cloud, verbose)
+
 @APP.cmd(help='jenkins upload tool')
 @APP.cmd_arg('-i', '--istream', help='input filename', type=argparse.FileType('r'), default=sys.stdin)
 @APP.cmd_arg('-u', '--user', help='Jenkins username', default="jenkins")
