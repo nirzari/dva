@@ -40,6 +40,7 @@ import testcase_360_ebs
 import testcase_361_ebs_deferred_detach
 import testcase_37_sshd_bug923996
 import testcase_38_rclocal_checksum
+import testcase_380_bug1103344_ttySOconf
 import testcase_39_root_is_locked
 import testcase_41_rh_amazon_rhui_client
 import testcase_42_ipv6
@@ -50,6 +51,9 @@ import testcase_60_yum_update
 import testcase_61_yum_proxy
 import testcase_62_cpuflags
 import testcase_63_sriov
+import testcase_64_blkfront
+import testcase_65_numa
+import testcase_66_bug1122300_proc_cmdline
 import testcase_80_no_avc_denials
 import testcase_90_1_kernel_bug874053
 import testcase_90_2_cgroups_kernel_bug914737
