@@ -32,7 +32,7 @@ def get_test_result(test_data, whitelist=[], verbose=False):
     except KeyError:
         # no test log
         test_log = []
-    if test_data['name'] in whitelist:
+    if (test_data['name'] in whitelist) and (ret != RESULT_PASSED):
         ret = RESULT_WAIVED
     log = ['%s:%s: %s' % (test_data['stage'], test_data['name'], ret)]
     if 'exception' in test_data and test_data['exception'] and (verbose or \
