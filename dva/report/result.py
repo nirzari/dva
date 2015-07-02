@@ -67,7 +67,7 @@ def get_hwp_result(data, whitelist=[], verbose=False):
         else:
             # stage result
             sub_result, sub_log = get_stage_result(res, verbose)
-        if sub_result in [RESULT_ERROR, RESULT_FAILED, RESULT_SKIP,RESULT_WAIVED] and ret == RESULT_PASSED:
+        if sub_result not in [RESULT_PASSED, RESULT_SKIP] and ret == RESULT_PASSED:
             ret = sub_result
         log.extend(sub_log)
     return ret, log

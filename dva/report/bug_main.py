@@ -9,7 +9,7 @@ import tempfile
 import aggregate
 from ..tools.retrying import retrying, EAgain
 from ..work.data import load_yaml, save_result, set_config_filename
-from ..work.common import RESULT_PASSED, RESULT_SKIP, RESULT_WAIVED
+from ..work.common import RESULT_PASSED, RESULT_SKIP, RESULT_WAIVED, RESULT_FAILED, RESULT_ERROR
 from result import get_hwp_result
 from gevent.pool import Pool
 from gevent.coros import RLock
