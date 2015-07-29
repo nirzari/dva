@@ -5,8 +5,6 @@ import re
 from data import record_cloud_config
 from stage import terminate_instance
 
-#TOKEN='id_region'
-
 ID_PARAMS = {
     'cloud': None,
     'enabled': True,
@@ -17,13 +15,6 @@ ID_PARAMS = {
     'itype':None,
     'ami':None
 }
-
-#def token_value(instance_id, region):
-#    return str(instance_id) + '_' + str(region)
-
-#def parse_token(token_value):
-#    return token_value.split('_')
-
 
 def main(conf, istream, ostream, cloud, verbose):
 
@@ -54,4 +45,3 @@ def main(conf, istream, ostream, cloud, verbose):
             print p['id'], p['region'], "was terminated"
         except Exception as e:
             print "Exception {0}".format(e)
-

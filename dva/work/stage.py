@@ -6,7 +6,6 @@ import logging
 import time
 import os
 import traceback
-#import terminate
 
 from functools import wraps
 from stitches import Expect, ExpectFailed
@@ -111,7 +110,6 @@ def create_instance(params):
         logger.debug('Skip Cloud Exception: %s', err)
         raise SkipError(err)
     params['id_region'] = str(params['id']) +'_' + str(params['region'])
-    # params[terminate.TOKEN] = terminate.token_value(params['id'], params['region'])
     return params
 
 
