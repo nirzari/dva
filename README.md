@@ -14,6 +14,11 @@ Installation
 * `sudo python setup.py install`
 * or `sudo pip install dva`
 
+(Optional) Ubuntu Packages Required For Installation
+----------------------------------------------------
+* apt-get install python-setuptools build-essential python-dev libffi-dev python-openssl libssl-dev
+* easy_install PyOpenSSL
+
 Usage
 -----
 * dry-run: `dva validate -n < data.yaml > result.yaml`
