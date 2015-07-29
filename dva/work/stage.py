@@ -6,6 +6,8 @@ import logging
 import time
 import os
 import traceback
+#import terminate
+
 from functools import wraps
 from stitches import Expect, ExpectFailed
 from stitches.connection import StitchesConnectionException
@@ -108,6 +110,8 @@ def create_instance(params):
         # this instance type can't be created in this region
         logger.debug('Skip Cloud Exception: %s', err)
         raise SkipError(err)
+    params['id_region'] = str(params['id']) +'_' + str(params['region'])
+    # params[terminate.TOKEN] = terminate.token_value(params['id'], params['region'])
     return params
 
 
