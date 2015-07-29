@@ -9,8 +9,14 @@ __dva's validation. again.__
 * `OpenStack` and `Fedora` is supported, too
 * 3rd-party test modules are supported
 
+Tested On
+---------
+* Fedora 19-22
+* Ubuntu 15.04
+
 Installation
 ------------
+* Requires Python 2
 * `sudo python setup.py install`
 * or `sudo pip install dva`
 
