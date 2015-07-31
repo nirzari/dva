@@ -12,8 +12,8 @@ _dva_tab() {
   cur=${COMP_WORDS[COMP_CWORD]}
   dva_prev=${COMP_WORDS[COMP_CWORD-1]}
   dva_options="-h --help -l --loglevel -c --conf"
-  dva_sections="svalidate validate result summary bugzilla jenkins"
-  grep_dva_sections=$(echo $COMP_LINE | egrep -o "(svalidate|validate|result|summary|bugzilla|jenkins)" )
+  dva_sections="svalidate validate result summary bugzilla jenkins terminate"
+  grep_dva_sections=$(echo $COMP_LINE | egrep -o "(svalidate|validate|result|summary|bugzilla|jenkins|terminate)" )
   optional_svalidate_args="-h --help -i --istream -o --ostream -t --test-whitelist \
                            -T --test-blacklist -s --stage-whitelist -S --stage-blacklist \
                            -g --tags-whitelist -G --tags-blacklist -n --no-action"
@@ -62,6 +62,8 @@ _dva_tab() {
       COMPREPLY=( $( compgen -W "$optional_result_args -u --user -p --password -U --url \
                                                        -d --debug-mode -C --component -R --product \
                                                        -P --pool-size" -- $cur ) );;
+    terminate)
+      COMPREPLY=( $( compgen -W "$optional_result_args" -- $cur ) );;
   esac
 }
 
