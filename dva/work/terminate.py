@@ -2,6 +2,7 @@
 terminate all created instances
 '''
 import re
+import sys
 from data import record_cloud_config
 from stage import terminate_instance
 
@@ -43,5 +44,8 @@ def main(conf, istream, ostream, cloud, verbose):
         try:
             terminate_instance(p)
             print p['id'], p['region'], "was terminated"
+        except KeyboardInterrupt:
+            sys.exit() 
         except Exception as e:
-            print "Exception {0}".format(e)
+            print "Unexpected error: {0}".format(e)
+            raise
