@@ -5,6 +5,8 @@ import re
 import sys
 from data import record_cloud_config
 from stage import terminate_instance
+from boto.exception import EC2ResponseError
+
 
 ID_PARAMS = {
     'cloud': None,
@@ -45,7 +47,9 @@ def main(conf, istream, ostream, cloud, verbose):
             terminate_instance(p)
             print p['id'], p['region'], "was terminated"
         except KeyboardInterrupt:
-            sys.exit() 
+            sys.exit()
+        except EC2ResponseError:
+            print "The instance {0} in {1} region may not be terminated. Modify its 'disableApiTermination' instance attribute and try again.".format(p['id'], p['region'])
         except Exception as e:
             print "Unexpected error: {0}".format(e)
             raise
