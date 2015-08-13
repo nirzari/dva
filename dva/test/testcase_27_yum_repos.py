@@ -10,6 +10,7 @@ class testcase_27_yum_repos(Testcase):
     """
     stages = ['stage1']
     applicable = {'platform': '(?i)RHEL|BETA', 'version': 'OS (>=5.5, !=6.0)'}
+    not_applicable = {'product': '(?i)ATOMIC'}
     after = ['testcase_24_yum_plugin']
     tags = ['default', 'content']
 

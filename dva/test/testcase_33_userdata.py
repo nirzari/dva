@@ -9,6 +9,7 @@ class testcase_33_userdata(Testcase):
     stages = ['stage1']
     tags = ['default']
     applicable = {"platform": "(?i)RHEL|BETA", "version": "OS ( > 6.3)"}
+    not_applicable = {'product': '(?i)ATOMIC'}
 
     def test(self, connection, params):
         """ Perform test """
