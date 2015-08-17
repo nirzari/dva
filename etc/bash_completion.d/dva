@@ -63,7 +63,7 @@ _dva_tab() {
                                                        -d --debug-mode -C --component -R --product \
                                                        -P --pool-size" -- $cur ) );;
     terminate)
-      COMPREPLY=( $( compgen -W "$optional_result_args" -- $cur ) );;
+      COMPREPLY=( $( compgen -W "$optional_result_args -n --no-action" -- $cur ) );;
   esac
 }
 
