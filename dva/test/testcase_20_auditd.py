@@ -12,6 +12,7 @@ class testcase_20_auditd(Testcase):
     stages = ['stage1']
     applicable = {'platform': '(?i)RHEL|BETA', 'version': r'5\..*|6\..*|7\..*'}
     tags = ['default']
+    not_applicable = {'product': '(?i)ATOMIC'}
 
     def test(self, connection, params):
         """ Perform test """

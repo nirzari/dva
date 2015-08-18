@@ -11,6 +11,7 @@ class testcase_50_yum_package_install(Testcase):
     tags = ['default', 'content']
     after = ['testcase_31_subscription_management']
     applicable = {"platform": "(?i)rhel|beta", "version": "OS (>=5.5, !=6.0)"}
+    not_applicable = {'product': '(?i)ATOMIC'}
 
     # pylint: disable=W0613
     def test(self, connection, params):

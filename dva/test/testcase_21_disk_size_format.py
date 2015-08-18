@@ -31,6 +31,7 @@ class testcase_21_disk_size_format(Testcase):
     - / shoud be ext3 on RHEL5, ext4 otherwise
     - other filesystems shoud be always be ext3
     - all filesystems show have at least 4gb of available space (weird)
+    - atomic is exception - 3gb and xfs possible
     """
     stages = ['stage1']
     tags = ['default']
@@ -41,12 +42,15 @@ class testcase_21_disk_size_format(Testcase):
 
         prod = params['platform'].upper()
         vers = LooseVersion(params['version'])
+        minsize = 3937219
+        if prod == 'ATOMIC':
+            minsize = 2900000
 
         disks = self.get_result(connection, 'mount | grep \'^/dev\' | awk \'{print $1}\'')
         if disks:
             for disk in set(disks.split()):
                 # check free space
-                self.get_return_value(connection, '[ `df -k %s | awk \'{ print $2 }\' | tail -n 1` -gt 3937219 ]' % disk)
+                self.get_return_value(connection, '[ `df -k %s | awk \'{ print $2 }\' | tail -n 1` -gt %d ]' % (disk, minsize))
                 # check mount point fstype
                 mpoint = self.match(connection, 'echo \'###\' ;mount | grep \'^%s\' | awk \'{print $3}\'; echo \'###\'' % disk,
                                     re.compile('.*\r\n###\r\n(.*)\r\n###\r\n.*', re.DOTALL))

@@ -10,6 +10,7 @@ class testcase_55_yum_group_install(Testcase):
     after = ['testcase_50_yum_package_install']
     tags = ['default', 'content']
     applicable = {"platform": "(?i)RHEL|BETA", "version": "OS (>=5.5, !=6.0)"}
+    not_applicable = {'product': '(?i)ATOMIC'}
 
     # pylint: disable=W0613
     def test(self, connection, params):
