@@ -40,7 +40,7 @@ class testcase_21_disk_size_format(Testcase):
     def test(self, connection, params):
         """ Perform test """
 
-        prod = params['platform'].upper()
+        prod = params['product'].upper()
         vers = LooseVersion(params['version'])
         minsize = 3937219
         if prod == 'ATOMIC':
