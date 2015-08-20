@@ -6,7 +6,7 @@ from distutils.version import LooseVersion
 
 def mount2fsys(prod, vers, mpoint):
     '''return expected fsys for particular mountpoint/platform/version combination'''
-    if vers < '6.0':
+    if prod == 'RHEL' and vers < '6.0':
         # ext3 for RHEL5 any mpoint
         return 'ext3'
     elif vers < '7.0' and mpoint == '/':

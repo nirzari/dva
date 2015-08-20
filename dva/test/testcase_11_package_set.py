@@ -13,6 +13,7 @@ class testcase_11_package_set(Testcase):
     """
     stages = ['stage1']
     applicable = {'platform': '(?i)RHEL|BETA|FEDORA'}
+    not_applicable = {'product': '(?i)ATOMIC'}
     tags = ['default']
 
     def package_list_filename(self, params):
