@@ -46,7 +46,10 @@ class testcase_21_disk_size_format(Testcase):
         if prod == 'ATOMIC':
             minsize = 2900000
 
-        disks = self.get_result(connection, 'mount | grep \'^/dev\' | awk \'{print $1}\'')
+        if prod == 'ATOMIC':
+            disks = self.get_result(connection, 'mount | grep \'^/dev/mapper\' | awk \'{print $1}\'')
+        else:
+            disks = self.get_result(connection, 'mount | grep \'^/dev\' | awk \'{print $1}\'')
         if disks:
             for disk in set(disks.split()):
                 # check free space
