@@ -12,6 +12,10 @@ class testcase_39_root_is_locked(Testcase):
     # pylint: disable=W0613
     def test(self, connection, params):
         """ Perform test """
+        prod = params['product'].upper()
 
-        self.get_return_value(connection, 'passwd -S root | grep -q LK')
+        if prod == 'ATOMIC':
+            self.get_return_value(connection, 'passwd -S root | grep -q Alternate')
+        else:
+            self.get_return_value(connection, 'passwd -S root | grep -q LK')
         return self.log
