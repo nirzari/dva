@@ -41,6 +41,8 @@ class testcase_21_disk_size_format(Testcase):
         """ Perform test """
 
         prod = params['product'].upper()
+        plat = params['platform'].upper()
+        if plat in ('RHEL', 'BETA'): prod = plat
         vers = LooseVersion(params['version'])
         minsize = 3937219
         if prod == 'ATOMIC':
