@@ -1,4 +1,4 @@
-""" This module contains  67_timezone test """
+""" This module contains  67_timezone test - bz1187669 """
 from testcase import Testcase
 
 
