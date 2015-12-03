@@ -59,7 +59,7 @@ class Namespace(dict):
 
 
 
-def load_ns(d, leaf_processor=lambda x: x):
+def load_ns(d, leaf_processor=lambda x: x, raw_fields=None):
     '''a recursive dict-to-Namespace loader'''
     if not isinstance(d, dict):
         if isinstance(d, list):
@@ -69,7 +69,11 @@ def load_ns(d, leaf_processor=lambda x: x):
         return leaf_processor(d)
     ns = Namespace()
     for k, v in d.items():
-        ns[k] = load_ns(v, leaf_processor)
+        if raw_fields is not None and isinstance(raw_fields, list) and k in raw_fields:
+            # some fields must not be normalized and lowercased, i.e. passwords
+            ns[k] = load_ns(v, leaf_processor=lambda x: x)
+        else:
+            ns[k] = load_ns(v, leaf_processor)
     return ns
 
 
