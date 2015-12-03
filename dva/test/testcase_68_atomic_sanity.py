@@ -36,7 +36,7 @@ class testcase_68_atomic_sanity(Testcase):
         self.get_return_value(connection, 'docker pull rhel7', 180)
         self.get_result(connection, 'printf "FROM rhel7\nRUN yum install traceroute -y --disablerepo=rhel-sjis-for-rhel-7-server-rpms\nCMD [\\"traceroute\\",\\"google.com\\"]\n" > Dockerfile; echo ')
         self.get_return_value(connection, 'docker build --rm -t traceroute .', 360)
-        self.get_return_value(connection, 'docker run --rm -it traceroute', 360)
+        self.get_return_value(connection, 'docker run --rm traceroute', 360)
         self.get_return_value(connection, 'docker rmi traceroute', 60)
         self.get_return_value(connection, 'docker rmi rhel7', 60)
         self.get_return_value(connection, 'subscription-manager unregister', 60)
