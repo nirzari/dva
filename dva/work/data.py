@@ -31,9 +31,11 @@ DEFAULT_FIELDS = {
 
 EPHEMERAL_FIELDS = ['credentials', 'global_setup_script', 'instance', 'ssh', 'test_stages', 'user_data',
         'bmap', 'enabled', 'userdata', 'test_whitelist', 'test_blacklist', 'stage_whitelist', 'stage_blacklist',
-        'tags_whitelist', 'tags_blacklist']
+        'tags_whitelist', 'tags_blacklist', 'subscription_username', 'subscription_password']
 
 GLOBAL_CONFIG_FIELDS = ['global_setup_script']
+
+RAW_FIELDS = ['subscription_username', 'subscription_password']
 
 RE_ALL = re.compile('.*')
 
@@ -107,6 +109,13 @@ def record_cloud_config(record, config_file=None):
                     # more than one subnet provided --- random pick one
                     subnet_id = random.choice(subnet_id)
                 record['subnet_id'] = subnet_id
+        # subscribction manager
+        if 'subscription_manager' in global_config['cloud_access']:
+            subscribction_manager_config = global_config['cloud_access']['subscription_manager']
+            if 'subscription_username' in subscribction_manager_config:
+                record['subscription_username'] = subscribction_manager_config['subscription_username']
+            if 'subscription_password' in subscribction_manager_config:
+                record['subscription_password'] = subscribction_manager_config['subscription_password']
     except KeyError as err:
         raise ConfigError('config %s(:ssh) misses %s' % (config_file, err))
     except IndexError as err:
@@ -174,7 +183,7 @@ def normalize_record(record):
     '''return a record with normalized fields'''
     assert type(record) is dict, 'invalid record type: %s' % type(record)
     # make sure all is lowercase and "safe"
-    tmp = load_ns(record, leaf_processor=lambda value: type(value) is str and value.lower() or value)
+    tmp = load_ns(record, leaf_processor=lambda value: type(value) is str and value.lower() or value, raw_fields=RAW_FIELDS)
     record = dump_ns(tmp)
     # override any defaults with original record
     # to prevent any missing fields
