@@ -26,7 +26,8 @@ DEFAULT_FIELDS = {
     'bmap': {},
     'userdata': '',
     'keepalive': False,
-    'region_endpoint': None
+    'region_endpoint': None,
+    'security_groups': ['default']
 }
 
 EPHEMERAL_FIELDS = ['credentials', 'global_setup_script', 'instance', 'ssh', 'test_stages', 'user_data',
