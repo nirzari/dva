@@ -99,6 +99,13 @@ def create_instance(params):
     @param params: testing parameters
     @type params:  dict
     """
+    
+    # In case the host name was specified in data.yaml, we skip the creation stage 
+    # and move on to attempt_ssh on an alredy running instance.
+    if params.get('hostname'):
+        params['keepalive'] = True
+        return params
+    
     driver = cloud.get_driver(params['cloud'], logger, CLOUD_DRIVER_MAXWAIT)
     try:
         driver.create(params)
