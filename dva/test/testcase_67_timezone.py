@@ -5,9 +5,6 @@ from testcase import Testcase
 class testcase_67_timezone(Testcase):
     """
     Check that the default timezone is set to UTC
-    
-    As of Jan 2016, there hasn't been fix for this BZ yet. This test should start failing once
-    the dafault zone is changed to UTC. 
     """
     stages = ['stage1']
     tags = ['default']
