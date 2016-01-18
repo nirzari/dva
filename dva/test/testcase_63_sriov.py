@@ -45,7 +45,7 @@ class testcase_63_sriov(Testcase):
         if params['cloudhwname'] not in SRIOV_INSTANCES:
             raise SkipException('unsupported instance HW type: %s' % params['cloudhwname'])
         # fetch device driver information
-        result = self.get_result(connection, 'ethtool -i eth0 | grep driver')
+        result = self.get_result(connection, 'ethtool -i eth0 | grep --color=never driver')
         assert result.strip() == 'driver: ixgbevf', 'got non-sriov driver: %s' % result
 
         return self.log
