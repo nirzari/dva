@@ -17,8 +17,9 @@ class testcase_26_verify_rpms(Testcase):
         plat = params['platform'].upper()
         prod = params['product'].upper()
         ver = params['version']
-        
+
         if connection.rpyc is None:
+            # in case RPyC library is missing, we try to satisfy the dependancy with an rpm recommended by stitches
             self.get_result(connection, 'curl https://rhuiqerpm.s3.amazonaws.com/python-rpyc-3.2.3-1.fc21.noarch.rpm -o /tmp/rpyc.rpm && rpm -i /tmp/rpyc.rpm', 60)
             if connection.rpyc is None:
                 self.log.append({
