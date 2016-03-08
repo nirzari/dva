@@ -9,7 +9,7 @@ class testcase_55_yum_group_install(Testcase):
     stages = ['stage1']
     after = ['testcase_50_yum_package_install']
     tags = ['default', 'content']
-    applicable = {"platform": "(?i)RHEL|BETA", "version": "OS (>=5.5, !=6.0)"}
+    applicable = {"platform": "(?i)RHEL", "version": "OS (>=5.5, !=6.0)"}
     not_applicable = {'product': '(?i)ATOMIC'}
 
     # pylint: disable=W0613
