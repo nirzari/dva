@@ -11,7 +11,7 @@ __dva's validation. again.__
 
 Tested On
 ---------
-* Fedora 19-22
+* Fedora 19-23
 * Ubuntu 15.04
 
 Installation
