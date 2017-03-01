@@ -1,0 +1,65 @@
+# This playbook installs all dva prerequsites and then installs dva itself. It is intended for RHEL 7.
+---
+- hosts: RHEL
+  tasks:
+    - name: Adding PyPA repo to get newer version of python-setuptools
+      become: true
+      yum_repository:
+        name: pypa-pypa
+        description: Copr repo for pypa
+        baseurl: https://copr-be.cloud.fedoraproject.org/results/pypa/pypa/epel-7-$basearch/
+        gpgcheck: no
+        gpgkey: https://copr-be.cloud.fedoraproject.org/results/pypa/pypa/pubkey.gpg
+        enabled: yes
+      
+    - name: install package python-setuptools
+      become: true
+      package: 
+        name: python-setuptools
+        state: latest
+      
+    - name: install package python-devel
+      become: true
+      package: 
+        name: python-devel 
+        state: present
+      
+    - name: install package gcc
+      become: true
+      package: 
+        name: gcc
+        state: present
+      
+    - name: install package libffi-devel
+      become: true
+      package: 
+        name: libffi-devel
+        state: present
+      
+    - name: install package openssl-devel
+      become: true
+      package: 
+        name: openssl-devel 
+        state: present
+      
+    - name: install package git
+      become: true
+      package: 
+        name: git
+        state: present
+      
+    - name: clone dva
+      git:
+        repo: https://github.com/RedHatQE/dva.git
+        dest: /home/ec2-user/dva
+      
+    - name: temporary hack - replace old gevent.coros method name
+      command: find /home/ec2-user/dva -type f -name '*py' -exec sed -i 's/gevent\.coros/gevent\.lock/g' {} \;
+     
+    - name: install dva
+      become: true
+      shell: python setup.py install
+      args:
+        chdir: /home/ec2-user/dva
+        creates: dva_installation_log.txt
+      
