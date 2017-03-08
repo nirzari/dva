@@ -12,6 +12,6 @@ class testcase_67_timezone(Testcase):
 
     # pylint: disable=unused-argument
     def test(self, connection, params):
-        self.get_return_value(connection, 'date | grep UTC')
+        self.get_return_value(connection, 'date -u | grep UTC')
         return self.log
 
